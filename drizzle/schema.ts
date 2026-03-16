@@ -16,3 +16,13 @@ export const tripRequests = sqliteTable("trip_requests", {
 export type TripRequestRecord = typeof tripRequests.$inferSelect;
 export type NewTripRequestRecord = typeof tripRequests.$inferInsert;
 
+export const apiCache = sqliteTable('api_cache', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  cacheKey: text('cache_key').notNull().unique(),
+  payload: text('payload').notNull(),
+  fetchedAt: integer('fetched_at', { mode: 'timestamp' }).notNull(),
+  ttlHours: integer('ttl_hours').notNull().default(2),
+})
+
+export type ApiCacheRecord = typeof apiCache.$inferSelect
+export type NewApiCacheRecord = typeof apiCache.$inferInsert
