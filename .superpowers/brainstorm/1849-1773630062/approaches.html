@@ -1,0 +1,45 @@
+<h2>Three ways to approach this</h2>
+<p class="subtitle">All three cover everything you asked — they differ in order and risk level.</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Content-first, search-second</h3>
+      <p><strong>Do first:</strong> Full-seed Manila, Sorsogon, Naga (+ Cebu, Davao). Overhaul all form copy and tier names. Add "Family trip" comfort/cost mode. Add budget input.</p>
+      <p><strong>Do second:</strong> Wire hybrid global search once the content foundation is solid.</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul><li>Philippines works great fast</li><li>Dad can plan immediately</li><li>Lower risk — no API keys needed yet</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Still limited to seeded cities until Phase 2</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B ★ Recommended</div>
+    <div class="content">
+      <h3>Everything in one sprint</h3>
+      <p><strong>Do together:</strong> Seed Manila + Sorsogon + Naga + Cebu + Davao fully. Rename all tiers and fix all copy. Add budget field + "easy travel" family toggle. Wire hybrid global search (Google Places autocomplete for typing, seeded data when matched, graceful fallback otherwise).</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul><li>Ships as one coherent upgrade</li><li>No half-baked states for the user</li><li>Global search + Philippines both work day one</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Needs a Google Places API key (free tier is generous)</li><li>Larger implementation sprint</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>No API keys — expand seed catalog broadly</h3>
+      <p><strong>Do:</strong> Seed 30+ destinations (Manila, Sorsogon, Naga, Cebu, Davao + Bangkok, Bali, Singapore, Lisbon, Rome, Cancun, etc.). Fix all copy. Add family mode + budget. No external API — everything stays self-contained.</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul><li>Zero API keys, zero ongoing costs</li><li>Fast, reliable, works offline</li><li>Covers 90% of common trips</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Still not "any city on earth"</li><li>More manual seeding work upfront</li></ul></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top:1.5rem">
+  <p class="subtitle">I recommend <strong>B</strong> — it ships the full vision in one clean pass. The Google Places API has a generous free tier and the autocomplete is what makes "any location on earth" feel real. Click your choice or reply in terminal.</p>
+</div>

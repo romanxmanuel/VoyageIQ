@@ -1,0 +1,48 @@
+<h2>What's working, what's not — VoyageIQ audit</h2>
+<p class="subtitle">Here's everything I found after reading the full codebase. Pick which problems to solve first.</p>
+
+<div class="section">
+  <span class="label">Problems found</span>
+  <div class="options" data-multiselect>
+    <div class="option" data-choice="search" onclick="toggleSelect(this)">
+      <div class="letter">A</div>
+      <div class="content">
+        <h3>Search only works for 9 destinations</h3>
+        <p>Type "Bangkok" or "Rome" and it silently falls back to Tokyo. No autocomplete. No error message. User has no idea why the result looks wrong.</p>
+      </div>
+    </div>
+    <div class="option" data-choice="philippines" onclick="toggleSelect(this)">
+      <div class="letter">B</div>
+      <div class="content">
+        <h3>Philippines is limited to 4 islands</h3>
+        <p>Boracay, El Nido, Bohol, Siargao only. No Manila, Sorsogon, Naga, Cebu, Davao, or any Luzon destinations at all.</p>
+      </div>
+    </div>
+    <div class="option" data-choice="text" onclick="toggleSelect(this)">
+      <div class="letter">C</div>
+      <div class="content">
+        <h3>Form language is too technical / jargon-heavy</h3>
+        <p>"Lean Explorer", "Elevated Flow", "Signature Memory", "Match confidence: Seeded spotlight", "Awaiting query" — none of this means anything to a regular traveler.</p>
+      </div>
+    </div>
+    <div class="option" data-choice="family" onclick="toggleSelect(this)">
+      <div class="letter">D</div>
+      <div class="content">
+        <h3>No "family trip" mode for older parents</h3>
+        <p>No walkability filter, no "easy travel" preference, no flight connection limits, no medical/comfort indicators. Hard to plan for someone with mobility needs.</p>
+      </div>
+    </div>
+    <div class="option" data-choice="ux" onclick="toggleSelect(this)">
+      <div class="letter">E</div>
+      <div class="content">
+        <h3>Other UX friction</h3>
+        <p>No origin airport autocomplete. "Nights" vs "Days" is confusing. No budget input (can't say "I have $5,000 to spend"). No trip type selector (beach, city, nature).</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top:2rem">
+  <span class="label">All of these are in scope — let me know if anything should be deprioritized</span>
+  <p class="subtitle">Click to highlight the ones most important to you, then reply in the terminal. Or just say "all of them."</p>
+</div>
