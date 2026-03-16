@@ -11,16 +11,18 @@ export interface TripConstraint {
   origin: string;
   travelers: number;
   nights: number;
+  travelPreferences?: {
+    preferDirectFlights: boolean
+    preferLocalFood: boolean
+    lowWalkingIntensity: boolean
+  }
+  budgetCap?: number
 }
+
+import type { PlannerInput } from "@/features/search/planner-input";
+export type { PlannerInput };
 
 export type VerificationLinkKind = "flight" | "hotel" | "airbnb" | "hostel" | "restaurant" | "activity" | "guide";
-
-export interface PlannerInput {
-  destinationQuery: string;
-  origin: string;
-  travelers: number;
-  nights: number;
-}
 
 export interface FlightTemplate {
   airline: string;
@@ -72,6 +74,8 @@ export interface DestinationSeed {
   country: string;
   regionLabel: string;
   airportCode: string;
+  cityCode?: string;
+  coordinates?: { lat: number; lng: number };
   tourismUrl?: string;
   heroTitle: string;
   summary: string;
@@ -92,6 +96,9 @@ export interface DestinationMatch {
   matchedAlias: string;
   isFallback: boolean;
   helperText: string;
+  iataCode: string;
+  cityCode: string;
+  coordinates: { lat: number; lng: number };
 }
 
 export interface FlightPlan extends FlightTemplate {
