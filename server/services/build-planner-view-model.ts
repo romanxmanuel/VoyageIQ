@@ -3,7 +3,7 @@ import { attachScenarioSimilarity, deriveTravelerProfile, deriveTripConstraints 
 import { getFeaturedDestinations, getPhilippinesSpotlights, resolveDestination } from "@/domain/trip/destination-catalog";
 import { PlannerInput, PlannerViewModel, TripScenario } from "@/domain/trip/types";
 import { attachScenarioVerification } from "@/server/services/attach-scenario-verification";
-import { fetchRawFlightOffers, pickTierOffer, normalizeFlightOffer } from "@/adapters/flights/amadeus-flight-adapter";
+import { fetchTravelpayoutsFlights, pickTierTicket, normalizeTravelpayoutsTicket } from "@/adapters/flights/travelpayouts-flight-adapter";
 import { fetchHotelOffers, pickTierHotel } from "@/adapters/lodging/amadeus-hotels-client";
 import { resolveIataCode } from "@/domain/trip/data/iata-city-map";
 
@@ -21,8 +21,8 @@ export async function buildPlannerViewModel(input: PlannerInput): Promise<Planne
   const originIata = resolveIataCode(input.origin) ?? 'MCO';
 
   try {
-    const [rawFlights, liveHotels] = await Promise.all([
-      fetchRawFlightOffers(
+    const [tickets, liveHotels] = await Promise.all([
+      fetchTravelpayoutsFlights(
         originIata,
         match.iataCode,
         fmt(departDate),
@@ -40,17 +40,18 @@ export async function buildPlannerViewModel(input: PlannerInput): Promise<Planne
     ]);
 
     for (const scenario of scenarios) {
-      const rawFlight = pickTierOffer(rawFlights, scenario.tier);
+      const rawTicket = pickTierTicket(tickets, scenario.tier);
       const tierHotel = pickTierHotel(liveHotels, scenario.tier, input.nights);
 
-      if (rawFlight) {
-        const normalized = normalizeFlightOffer(rawFlight, input.travelers);
+      if (rawTicket) {
+        const normalized = normalizeTravelpayoutsTicket(rawTicket, input.travelers);
         scenario.flight = {
           ...scenario.flight,
           baseFarePerTraveler: normalized.pricePerTraveler,
           airline: normalized.airline,
           durationHours: Math.round((normalized.durationMinutes / 60) * 10) / 10,
           stops: normalized.stops,
+          deepLinkUrl: normalized.deepLinkUrl,
         };
       }
       if (tierHotel) {

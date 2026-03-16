@@ -34,6 +34,7 @@ export interface FlightTemplate {
   cabin: string;
   bookingTip: string;
   baseFarePerTraveler: number;
+  deepLinkUrl?: string;
 }
 
 export interface StayOption {
