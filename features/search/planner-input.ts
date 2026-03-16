@@ -36,7 +36,7 @@ export function parsePlannerSearchParams(searchParams: RawSearchParams): Planner
     origin: pickFirst(searchParams.origin),
     travelers: pickFirst(searchParams.travelers),
     nights: pickFirst(searchParams.nights),
-    budgetCap: pickFirst(searchParams.budgetCap),
+    budgetCap: pickFirst(searchParams.budgetCap) || undefined,
     preferDirectFlights: pickFirst(searchParams.preferDirectFlights),
     preferLocalFood: pickFirst(searchParams.preferLocalFood),
     lowWalkingIntensity: pickFirst(searchParams.lowWalkingIntensity),
