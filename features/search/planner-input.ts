@@ -1,41 +1,65 @@
 import { z } from "zod";
-import { PlannerInput } from "@/domain/trip/types";
+
+// Coerce string "true"/"false" to boolean; actual booleans pass through.
+const booleanFromString = z
+  .union([z.boolean(), z.string()])
+  .transform((val) => {
+    if (typeof val === "boolean") return val;
+    return val.toLowerCase() === "true";
+  })
+  .default(false);
 
 const plannerSearchSchema = z.object({
   destination: z.string().trim().min(1).optional(),
   origin: z.string().trim().min(2).default("Orlando"),
   travelers: z.coerce.number().int().min(1).max(12).default(2),
-  nights: z.coerce.number().int().min(3).max(14).default(6)
+  nights: z.coerce.number().int().min(3).max(14).default(6),
+  budgetCap: z.coerce.number().positive().optional(),
+  preferDirectFlights: booleanFromString,
+  preferLocalFood: booleanFromString,
+  lowWalkingIntensity: booleanFromString,
 });
+
+export type PlannerInput = z.infer<typeof plannerSearchSchema> & {
+  destinationQuery: string;
+};
 
 type RawSearchParams = Record<string, string | string[] | undefined>;
 
+function pickFirst(value: string | string[] | undefined): string | undefined {
+  return Array.isArray(value) ? value[0] : value;
+}
+
 export function parsePlannerSearchParams(searchParams: RawSearchParams): PlannerInput | null {
   const parsed = plannerSearchSchema.safeParse({
-    destination: Array.isArray(searchParams.destination) ? searchParams.destination[0] : searchParams.destination,
-    origin: Array.isArray(searchParams.origin) ? searchParams.origin[0] : searchParams.origin,
-    travelers: Array.isArray(searchParams.travelers) ? searchParams.travelers[0] : searchParams.travelers,
-    nights: Array.isArray(searchParams.nights) ? searchParams.nights[0] : searchParams.nights
+    destination: pickFirst(searchParams.destination),
+    origin: pickFirst(searchParams.origin),
+    travelers: pickFirst(searchParams.travelers),
+    nights: pickFirst(searchParams.nights),
+    budgetCap: pickFirst(searchParams.budgetCap),
+    preferDirectFlights: pickFirst(searchParams.preferDirectFlights),
+    preferLocalFood: pickFirst(searchParams.preferLocalFood),
+    lowWalkingIntensity: pickFirst(searchParams.lowWalkingIntensity),
   });
 
-  if (!parsed.success || !parsed.data.destination) {
-    return null;
-  }
+  if (!parsed.success || !parsed.data.destination) return null;
 
   return {
+    ...parsed.data,
     destinationQuery: parsed.data.destination,
-    origin: parsed.data.origin,
-    travelers: parsed.data.travelers,
-    nights: parsed.data.nights
   };
 }
 
 export function getDefaultPlannerInput(): PlannerInput {
   return {
     destinationQuery: "",
+    destination: "",
     origin: "Orlando",
     travelers: 2,
-    nights: 6
+    nights: 6,
+    budgetCap: undefined,
+    preferDirectFlights: false,
+    preferLocalFood: false,
+    lowWalkingIntensity: false,
   };
 }
-
