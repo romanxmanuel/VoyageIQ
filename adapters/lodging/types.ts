@@ -1,5 +1,18 @@
 import { DestinationMatch, PlannerInput, ScenarioTier, TripScenario, VerificationLink } from "@/domain/trip/types";
 
+export interface LiveHotelOffer {
+  hotelId: string
+  hotelName: string
+  address: string
+  stars: number
+  checkIn: string
+  checkOut: string
+  roomType: string
+  pricePerNight: number
+  totalPrice: number
+  deepLinkUrl: string
+}
+
 export interface LodgingSearchResult extends VerificationLink {
   kind: "hotel" | "airbnb" | "hostel";
 }
