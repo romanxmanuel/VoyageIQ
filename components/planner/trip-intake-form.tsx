@@ -6,6 +6,7 @@ import { DestinationSpotlight, PlannerInput } from "@/domain/trip/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useDestinationSearch } from "@/features/search/use-destination-search";
 import { cn } from "@/lib/utils";
 
 interface TripIntakeFormProps {
@@ -16,7 +17,11 @@ interface TripIntakeFormProps {
 
 export function TripIntakeForm({ featuredDestinations, philippinesSpotlights, initialInput }: TripIntakeFormProps) {
   const [destination, setDestination] = useState(initialInput.destinationQuery);
+  const [destinationInput, setDestinationInput] = useState(initialInput.destinationQuery);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [showFamilyMode, setShowFamilyMode] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const { predictions } = useDestinationSearch(destinationInput);
   const deferredDestination = useDeferredValue(destination);
   const normalizedDestination = deferredDestination.toLowerCase().trim();
   const isPhilippinesSpot = philippinesSpotlights.some((spot) => spot.name.toLowerCase() === normalizedDestination);
@@ -44,14 +49,42 @@ export function TripIntakeForm({ featuredDestinations, philippinesSpotlights, in
 
           <form action="/" className="grid gap-4 sm:grid-cols-2">
             <label className="space-y-2 sm:col-span-2">
-              <span className="text-sm font-medium text-slate-200">Destination or landmark</span>
-              <input
-                className="w-full rounded-3xl border border-white/10 bg-slate-950/60 px-4 py-3 text-base text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-300/45"
-                name="destination"
-                onChange={(event) => setDestination(event.target.value)}
-                placeholder="Tokyo, Eiffel Tower, Waikiki, Senso-ji..."
-                value={destination}
-              />
+              <span className="text-sm font-medium text-slate-200">Where do you want to go?</span>
+              <div className="relative">
+                <input
+                  type="text"
+                  name="destination"
+                  value={destinationInput}
+                  onChange={(e) => {
+                    setDestinationInput(e.target.value);
+                    setDestination(e.target.value);
+                    setShowSuggestions(true);
+                  }}
+                  onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+                  placeholder="Any city, beach, or country..."
+                  className="w-full rounded-3xl border border-white/10 bg-slate-950/60 px-4 py-3 text-base text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-300/45"
+                />
+                {showSuggestions && predictions.length > 0 && (
+                  <ul className="absolute z-10 w-full bg-black border border-white/10 rounded-lg mt-1 max-h-48 overflow-y-auto shadow-lg">
+                    {predictions.map((p) => (
+                      <li
+                        key={p.placeId}
+                        className="px-4 py-2 hover:bg-white/10 cursor-pointer text-sm"
+                        onMouseDown={() => {
+                          setDestinationInput(p.mainText);
+                          setDestination(p.mainText);
+                          setShowSuggestions(false);
+                        }}
+                      >
+                        <span className="font-medium">{p.mainText}</span>
+                        {p.secondaryText && (
+                          <span className="text-white/40 ml-2 text-xs">{p.secondaryText}</span>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             </label>
 
             {showPhilippinesSpotSelector ? (
@@ -61,6 +94,7 @@ export function TripIntakeForm({ featuredDestinations, philippinesSpotlights, in
                   className="w-full rounded-3xl border border-white/10 bg-slate-950/60 px-4 py-3 text-base text-white outline-none transition focus:border-cyan-300/45"
                   onChange={(event) => {
                     if (event.target.value) {
+                      setDestinationInput(event.target.value);
                       setDestination(event.target.value);
                     }
                   }}
@@ -74,13 +108,13 @@ export function TripIntakeForm({ featuredDestinations, philippinesSpotlights, in
                   ))}
                 </select>
                 <p className="text-sm leading-6 text-slate-400">
-                  Boracay is the default seeded match for “Philippines,” but you can switch straight into El Nido, Bohol, or Siargao here.
+                  Boracay is the default match for Philippines, but you can switch to El Nido, Bohol, Siargao, Cebu, Manila, or beyond.
                 </p>
               </label>
             ) : null}
 
             <label className="space-y-2">
-              <span className="text-sm font-medium text-slate-200">Departing from</span>
+              <span className="text-sm font-medium text-slate-200">Flying from</span>
               <input
                 className="w-full rounded-3xl border border-white/10 bg-slate-950/60 px-4 py-3 text-base text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-300/45"
                 defaultValue={initialInput.origin}
@@ -102,7 +136,7 @@ export function TripIntakeForm({ featuredDestinations, philippinesSpotlights, in
             </label>
 
             <label className="space-y-2">
-              <span className="text-sm font-medium text-slate-200">Nights</span>
+              <span className="text-sm font-medium text-slate-200">Trip length (days)</span>
               <input
                 className="w-full rounded-3xl border border-white/10 bg-slate-950/60 px-4 py-3 text-base text-white outline-none transition focus:border-cyan-300/45"
                 defaultValue={initialInput.nights}
@@ -113,9 +147,49 @@ export function TripIntakeForm({ featuredDestinations, philippinesSpotlights, in
               />
             </label>
 
+            <div className="space-y-2">
+              <span className="text-sm font-medium text-slate-200">Your total budget (optional)</span>
+              <input
+                type="number"
+                name="budgetCap"
+                min={500}
+                step={100}
+                placeholder="e.g. 4000"
+                className="w-full rounded-3xl border border-white/10 bg-slate-950/60 px-4 py-3 text-base text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-300/45"
+              />
+              <p className="text-xs text-white/40 mt-1">Total USD for the whole trip</p>
+            </div>
+
+            <div className="border border-white/10 rounded-lg p-4 sm:col-span-2">
+              <button
+                type="button"
+                onClick={() => setShowFamilyMode(!showFamilyMode)}
+                className="w-full text-left text-sm font-medium flex justify-between items-center text-white/70 hover:text-white transition-colors"
+              >
+                <span>Planning for older or less-mobile travelers?</span>
+                <span className="text-white/40">{showFamilyMode ? "−" : "+"}</span>
+              </button>
+              {showFamilyMode && (
+                <div className="mt-3 space-y-2">
+                  <label className="flex items-center gap-2 text-sm text-white/60 cursor-pointer">
+                    <input type="checkbox" name="preferDirectFlights" value="true" className="accent-white" />
+                    Prefer direct or single-connection flights
+                  </label>
+                  <label className="flex items-center gap-2 text-sm text-white/60 cursor-pointer">
+                    <input type="checkbox" name="preferLocalFood" value="true" className="accent-white" />
+                    Prioritize authentic local food, not tourist restaurants
+                  </label>
+                  <label className="flex items-center gap-2 text-sm text-white/60 cursor-pointer">
+                    <input type="checkbox" name="lowWalkingIntensity" value="true" className="accent-white" />
+                    Avoid long walking days (max 3km/day)
+                  </label>
+                </div>
+              )}
+            </div>
+
             <div className="flex items-end sm:col-span-2">
               <Button className="w-full sm:w-auto" type="submit">
-                Build trip scenarios
+                Find real trips with live prices &#x2192;
               </Button>
             </div>
           </form>
@@ -132,6 +206,7 @@ export function TripIntakeForm({ featuredDestinations, philippinesSpotlights, in
                 key={destinationOption.slug}
                 onClick={() =>
                   startTransition(() => {
+                    setDestinationInput(destinationOption.name);
                     setDestination(destinationOption.name);
                   })
                 }
@@ -149,7 +224,6 @@ export function TripIntakeForm({ featuredDestinations, philippinesSpotlights, in
               <Sparkles className="size-5" />
             </div>
             <div>
-              <p className="text-xs uppercase tracking-[0.22em] text-slate-400">Live intake read</p>
               <p className="font-display text-xl text-white">{spotlight.name}</p>
             </div>
           </div>
@@ -167,7 +241,10 @@ export function TripIntakeForm({ featuredDestinations, philippinesSpotlights, in
                       : "border-white/10 bg-white/5 text-slate-300 hover:border-white/20 hover:bg-white/10"
                   )}
                   key={spot.slug}
-                  onClick={() => setDestination(spot.name)}
+                  onClick={() => {
+                    setDestinationInput(spot.name);
+                    setDestination(spot.name);
+                  }}
                   type="button"
                 >
                   {spot.name}
@@ -175,26 +252,6 @@ export function TripIntakeForm({ featuredDestinations, philippinesSpotlights, in
               ))}
             </div>
           ) : null}
-
-          <div className="mt-5 space-y-3 rounded-[22px] border border-white/10 bg-white/5 p-4">
-            <div className="flex items-center justify-between text-sm text-slate-200">
-              <span>Match confidence</span>
-              <span>{deferredDestination.trim() ? "Seeded spotlight" : "Awaiting query"}</span>
-            </div>
-            <div className="h-2 rounded-full bg-white/8">
-              <div
-                className={cn(
-                  "h-2 rounded-full bg-[linear-gradient(90deg,#65f5d4,#f6d365)] transition-all",
-                  deferredDestination.trim() ? "w-3/4" : "w-1/3"
-                )}
-              />
-            </div>
-            <p className="text-sm leading-6 text-slate-300">
-              {deferredDestination.trim()
-                ? `${spotlight.name} is the closest seeded strategy match right now. Live provider search slots in later through the adapter layer.`
-                : "Type a destination or landmark to generate a full trip strategy view."}
-            </p>
-          </div>
 
           <p className="mt-4 text-xs text-slate-400">
             {isPending ? "Switching destination spotlight..." : "VoyageIQ keeps the intake light, then expands into tradeoffs."}
