@@ -304,6 +304,19 @@ Suggested commit style:
 - Do not let React components own itinerary assembly logic
 - Do not allow data model drift between adapters, DB schema, and UI types
 
+## Environment Variables
+
+Required for full functionality:
+- `AMADEUS_CLIENT_ID` — Amadeus API client ID (register at https://developers.amadeus.com)
+- `AMADEUS_CLIENT_SECRET` — Amadeus API client secret
+- `GOOGLE_PLACES_API_KEY` — Google Places Autocomplete API key
+- `TURSO_DATABASE_URL` — Turso database URL
+- `TURSO_AUTH_TOKEN` — Turso auth token
+
+For local dev: copy `.env.example` to `.env.local` and fill in real values.
+
+The app degrades gracefully — if Amadeus credentials are absent, seeded price estimates are used. If Google Places key is absent, free-text destination input still works (no autocomplete).
+
 ## Initial System Direction
 
 VoyageIQ should initially be built around three separable engines:
