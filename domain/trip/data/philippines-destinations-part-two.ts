@@ -7,6 +7,8 @@ export const philippinesDestinationsPartTwo: DestinationSeed[] = [
     country: "Philippines",
     regionLabel: "Panglao, Loboc, and Chocolate Hills corridor",
     airportCode: "TAG",
+    cityCode: "TAG",
+    coordinates: { lat: 9.6500, lng: 123.8538 },
     tourismUrl: "https://tourism.bohol.gov.ph/",
     heroTitle: "Beach time, countryside routes, and a very family-readable Philippines itinerary",
     summary:
@@ -183,6 +185,8 @@ export const philippinesDestinationsPartTwo: DestinationSeed[] = [
     country: "Philippines",
     regionLabel: "General Luna, Cloud 9, and island-hopping coast",
     airportCode: "IAO",
+    cityCode: "IAO",
+    coordinates: { lat: 9.8485, lng: 126.0458 },
     tourismUrl: "https://www.siargao.ph/",
     heroTitle: "Surf-town rhythm, blue lagoons, and a lower-density island energy that still feels cinematic",
     summary:

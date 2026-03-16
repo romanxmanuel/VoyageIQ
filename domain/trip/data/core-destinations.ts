@@ -7,6 +7,8 @@ export const coreDestinations: DestinationSeed[] = [
     country: "Japan",
     regionLabel: "Shibuya to Asakusa loop",
     airportCode: "HND",
+    cityCode: "TYO",
+    coordinates: { lat: 35.6762, lng: 139.6503 },
     heroTitle: "High-voltage city energy with precise transport and layered neighborhoods",
     summary:
       "Tokyo works when you want a trip that can flex from efficient budget nights to premium skyline dining without losing flow.",
@@ -182,6 +184,8 @@ export const coreDestinations: DestinationSeed[] = [
     country: "France",
     regionLabel: "Marais, Saint-Germain, and Left Bank",
     airportCode: "CDG",
+    cityCode: "PAR",
+    coordinates: { lat: 48.8566, lng: 2.3522 },
     heroTitle: "Museum density, cafe rhythm, and elegant tradeoffs between walkability and splurge",
     summary:
       "Paris is strongest when the plan balances iconic anchors with neighborhood pacing so the trip feels cinematic rather than rushed.",
@@ -357,6 +361,8 @@ export const coreDestinations: DestinationSeed[] = [
     country: "United States",
     regionLabel: "Waikiki, Kakaako, and Diamond Head",
     airportCode: "HNL",
+    cityCode: "HNL",
+    coordinates: { lat: 21.3069, lng: -157.8583 },
     heroTitle: "Beach ease, family-proof logistics, and clean luxury upside when budget increases",
     summary:
       "Honolulu is a strong family optimizer because you can control cost through lodging mix while keeping the emotional payoff high.",

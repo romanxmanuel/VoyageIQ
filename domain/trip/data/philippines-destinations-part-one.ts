@@ -7,6 +7,8 @@ export const philippinesDestinationsPartOne: DestinationSeed[] = [
     country: "Philippines",
     regionLabel: "White Beach, Station 1 to Station 3",
     airportCode: "MPH",
+    cityCode: "MPH",
+    coordinates: { lat: 11.9674, lng: 121.9248 },
     tourismUrl: "https://www.itsmorefuninthephilippines.com/destinations/boracay/",
     heroTitle: "Powder-white beach days, easy island pacing, and a high payoff family reset",
     summary:
@@ -183,6 +185,8 @@ export const philippinesDestinationsPartOne: DestinationSeed[] = [
     country: "Philippines",
     regionLabel: "Corong Corong, Bacuit Bay, and Big Lagoon routes",
     airportCode: "ENI",
+    cityCode: "ENI",
+    coordinates: { lat: 11.1784, lng: 119.4053 },
     tourismUrl: "https://elnidoofficial.com/",
     heroTitle: "Limestone cliffs, blue-water tours, and one of the strongest scenic payoffs in Southeast Asia",
     summary:
