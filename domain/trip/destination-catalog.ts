@@ -6,6 +6,8 @@ import { nagaDestination } from "@/domain/trip/data/philippines-naga";
 import { cebuDestination } from "@/domain/trip/data/philippines-cebu";
 import { davaoDestination } from "@/domain/trip/data/philippines-davao";
 import { DestinationMatch, DestinationSeed } from "@/domain/trip/types";
+import { createGenericDestinationSeed } from "@/domain/trip/data/generic-destination";
+import { resolveIataCode } from "@/domain/trip/data/iata-city-map";
 
 const philippinesCityDestinations: DestinationSeed[] = [
   manilaDestination,
@@ -106,6 +108,30 @@ export function resolveDestination(query: string): DestinationMatch {
 
   const isFallback = !normalizedQuery || ranked[0]?.score < 2;
 
+  if (isFallback && normalizedQuery) {
+    // Try to resolve via IATA map for unsupported cities
+    const iataCode = resolveIataCode(normalizedQuery);
+    if (iataCode) {
+      const genericSeed = createGenericDestinationSeed(
+        query, // use original casing
+        "International",
+        iataCode,
+        { lat: 0, lng: 0 }
+      );
+      return {
+        destination: genericSeed,
+        originalQuery: query,
+        normalizedQuery,
+        matchedAlias: normalizedQuery,
+        isFallback: false,
+        helperText: `Planning your trip to ${query} with live flight prices via Aviasales.`,
+        iataCode,
+        cityCode: iataCode,
+        coordinates: { lat: 0, lng: 0 },
+      };
+    }
+  }
+
   return {
     destination: bestMatch,
     originalQuery: query,
@@ -113,7 +139,7 @@ export function resolveDestination(query: string): DestinationMatch {
     matchedAlias,
     isFallback,
     helperText: isFallback
-      ? `VoyageIQ mapped "${query || "your search"}" to ${bestMatch.name} for the seeded strategy engine. Live destination lookup can replace this without changing the app architecture.`
+      ? `Showing results for ${bestMatch.name} — type more specifically or choose from the Philippines quick-picks for an exact match.`
       : `Matched your search to ${bestMatch.name} using "${matchedAlias}".`,
     iataCode: bestMatch.airportCode,
     cityCode: bestMatch.cityCode ?? bestMatch.airportCode,

@@ -18,6 +18,7 @@ const plannerSearchSchema = z.object({
   preferDirectFlights: booleanFromString,
   preferLocalFood: booleanFromString,
   lowWalkingIntensity: booleanFromString,
+  departureDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
 });
 
 export type PlannerInput = z.infer<typeof plannerSearchSchema> & {
@@ -40,6 +41,7 @@ export function parsePlannerSearchParams(searchParams: RawSearchParams): Planner
     preferDirectFlights: pickFirst(searchParams.preferDirectFlights),
     preferLocalFood: pickFirst(searchParams.preferLocalFood),
     lowWalkingIntensity: pickFirst(searchParams.lowWalkingIntensity),
+    departureDate: pickFirst(searchParams.departureDate),
   });
 
   if (!parsed.success || !parsed.data.destination) return null;
@@ -61,5 +63,6 @@ export function getDefaultPlannerInput(): PlannerInput {
     preferDirectFlights: false,
     preferLocalFood: false,
     lowWalkingIntensity: false,
+    departureDate: undefined,
   };
 }

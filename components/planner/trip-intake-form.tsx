@@ -147,6 +147,17 @@ export function TripIntakeForm({ featuredDestinations, philippinesSpotlights, in
               />
             </label>
 
+            <label className="space-y-2">
+              <span className="text-sm font-medium text-slate-200">Departure date (optional)</span>
+              <input
+                className="w-full rounded-3xl border border-white/10 bg-slate-950/60 px-4 py-3 text-base text-white outline-none transition focus:border-cyan-300/45"
+                defaultValue={initialInput.departureDate ?? ""}
+                min={new Date().toISOString().split("T")[0]}
+                name="departureDate"
+                type="date"
+              />
+            </label>
+
             <div className="space-y-2">
               <span className="text-sm font-medium text-slate-200">Your total budget (optional)</span>
               <input

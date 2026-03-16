@@ -221,6 +221,8 @@ export interface PlannerViewModel {
   match: DestinationMatch;
   scenarios: TripScenario[];
   selectedScenarioIndex: number;
+  departDate: string;   // YYYY-MM-DD
+  returnDate: string;   // YYYY-MM-DD
 }
 
 export interface DestinationSpotlight {

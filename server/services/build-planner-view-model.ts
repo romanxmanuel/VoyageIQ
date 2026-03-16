@@ -15,7 +15,9 @@ export async function buildPlannerViewModel(input: PlannerInput): Promise<Planne
 
   // Live data enrichment
   const today = new Date();
-  const departDate = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000);
+  const departDate = input.departureDate
+    ? new Date(input.departureDate)
+    : new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000);
   const returnDate = new Date(departDate.getTime() + input.nights * 24 * 60 * 60 * 1000);
   const fmt = (d: Date) => d.toISOString().split('T')[0];
   const originIata = resolveIataCode(input.origin) ?? 'MCO';
@@ -81,6 +83,8 @@ export async function buildPlannerViewModel(input: PlannerInput): Promise<Planne
     match,
     scenarios: reorderedScenarios,
     selectedScenarioIndex,
+    departDate: fmt(departDate),
+    returnDate: fmt(returnDate),
   };
 }
 
