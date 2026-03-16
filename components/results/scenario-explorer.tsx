@@ -16,6 +16,13 @@ interface ScenarioExplorerProps {
   viewModel: PlannerViewModel;
 }
 
+const TIER_DISPLAY_NAMES: Record<string, string> = {
+  lean: "Budget",
+  balanced: "Best Value",
+  elevated: "Comfortable",
+  signature: "Splurge",
+};
+
 const CHANGE_LABELS: Record<string, string> = {
   costPerDay: "Price/day",
   comfort: "Comfort",
@@ -69,7 +76,7 @@ export function ScenarioExplorer({ viewModel }: ScenarioExplorerProps) {
               <div className="rounded-[24px] border border-white/10 bg-white/5 p-5">
                 <div className="mb-3 flex items-center gap-3 text-cyan-100">
                   <Wallet className="size-5" />
-                  <span className="text-xs uppercase tracking-[0.2em] text-slate-400">Family total</span>
+                  <span className="text-xs uppercase tracking-[0.2em] text-slate-400">Trip total</span>
                 </div>
                 <p className="font-display text-3xl text-white">{formatCurrency(activeScenario.cost.totalTripCost)}</p>
                 <p className="mt-2 text-sm text-slate-300">
@@ -143,7 +150,7 @@ export function ScenarioExplorer({ viewModel }: ScenarioExplorerProps) {
                     onClick={() => startTransition(() => setSelectedIndex(index))}
                     type="button"
                   >
-                    <p className="text-xs uppercase tracking-[0.18em] text-slate-400">{scenario.tier}</p>
+                    <p className="text-xs uppercase tracking-[0.18em] text-slate-400">{TIER_DISPLAY_NAMES[scenario.tier] ?? scenario.label}</p>
                     <p className="mt-1 font-medium">{scenario.label}</p>
                     <p className="mt-2 text-sm">{formatCurrency(scenario.cost.totalTripCost)}</p>
                   </button>
@@ -200,7 +207,7 @@ export function ScenarioExplorer({ viewModel }: ScenarioExplorerProps) {
               <p className="mb-6 text-sm leading-6 text-slate-300">{activeScenario.fitSummary}</p>
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="rounded-[24px] border border-emerald-300/12 bg-emerald-300/7 p-4">
-                  <p className="text-xs uppercase tracking-[0.18em] text-emerald-100/70">You gain</p>
+                  <p className="text-xs uppercase tracking-[0.18em] text-emerald-100/70">What you get</p>
                   <ul className="mt-3 space-y-2 text-sm text-white">
                     {activeScenario.tradeoffs.gains.map((item) => (
                       <li key={item}>{item}</li>
@@ -208,7 +215,7 @@ export function ScenarioExplorer({ viewModel }: ScenarioExplorerProps) {
                   </ul>
                 </div>
                 <div className="rounded-[24px] border border-amber-300/12 bg-amber-300/7 p-4">
-                  <p className="text-xs uppercase tracking-[0.18em] text-amber-100/70">You lose</p>
+                  <p className="text-xs uppercase tracking-[0.18em] text-amber-100/70">What you give up</p>
                   <ul className="mt-3 space-y-2 text-sm text-white">
                     {activeScenario.tradeoffs.losses.map((item) => (
                       <li key={item}>{item}</li>
@@ -281,7 +288,7 @@ export function ScenarioExplorer({ viewModel }: ScenarioExplorerProps) {
             </Card>
 
             <Card>
-              <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Booking stack</p>
+              <p className="text-xs uppercase tracking-[0.2em] text-slate-400">How to book this trip</p>
               <div className="mt-3 space-y-4">
                 <div>
                   <h4 className="font-display text-xl text-white">{activeScenario.flight.airline}</h4>
@@ -320,7 +327,7 @@ export function ScenarioExplorer({ viewModel }: ScenarioExplorerProps) {
 
           <div className="space-y-6">
             <Card>
-              <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Arrival plan</p>
+              <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Your first day</p>
               <div className="mt-4 space-y-3">
                 {activeScenario.arrivalPlan.map((item) => (
                   <div className="rounded-2xl border border-white/8 bg-white/5 p-4 text-sm leading-6 text-slate-200" key={item}>

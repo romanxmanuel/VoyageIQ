@@ -7,12 +7,12 @@ interface CostBreakdownProps {
 
 const rows: Array<{ key: keyof CostBreakdownType; label: string }> = [
   { key: "airfareTotal", label: "Flights" },
-  { key: "lodgingTotal", label: "Stay" },
+  { key: "lodgingTotal", label: "Hotels" },
   { key: "foodTotal", label: "Food" },
   { key: "activitiesTotal", label: "Activities" },
-  { key: "localTransitTotal", label: "Local transit" },
-  { key: "taxesAndFees", label: "Taxes and fees" },
-  { key: "contingencyBuffer", label: "Flex buffer" }
+  { key: "localTransitTotal", label: "Local transport" },
+  { key: "taxesAndFees", label: "Taxes & fees" },
+  { key: "contingencyBuffer", label: "Contingency buffer" }
 ];
 
 export function CostBreakdown({ cost }: CostBreakdownProps) {
@@ -24,6 +24,7 @@ export function CostBreakdown({ cost }: CostBreakdownProps) {
           <span className="font-medium text-white">{formatCurrency(cost[row.key])}</span>
         </div>
       ))}
+      <p className="text-xs text-white/40 mt-2">Prices are live and may change at time of booking.</p>
     </div>
   );
 }
