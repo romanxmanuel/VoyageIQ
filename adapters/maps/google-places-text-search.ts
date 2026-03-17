@@ -21,7 +21,7 @@ const FIELD_MASK = [
 ].join(",");
 
 export async function searchGooglePlace(query: string) {
-  const apiKey = process.env.GOOGLE_MAPS_API_KEY;
+  const apiKey = process.env.GOOGLE_PLACES_API_KEY ?? process.env.GOOGLE_MAPS_API_KEY;
 
   if (!apiKey) {
     return null;

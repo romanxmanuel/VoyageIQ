@@ -18,7 +18,7 @@ export interface ProviderRegistry {
 }
 
 export function getProviderRegistry() {
-  const hasGooglePlaces = Boolean(process.env.GOOGLE_MAPS_API_KEY);
+  const hasGooglePlaces = Boolean(process.env.GOOGLE_PLACES_API_KEY ?? process.env.GOOGLE_MAPS_API_KEY);
 
   return {
     flights: new OutboundLinkFlightAdapter(),

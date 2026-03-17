@@ -1,8 +1,68 @@
 # VoyageIQ
 
-> Constraint-aware travel optimization that shows the best trip you can have under real-world limits and what changes when those limits move.
+Constraint-aware travel optimization that turns minimal input into a full trip strategy, then explains what changes as budget, comfort, and trip length move.
+
+Live app: [voyageiq-three.vercel.app](https://voyageiq-three.vercel.app)
+
+## Why This Project Matters
+
+VoyageIQ is intentionally not a booking-filter clone.
+
+Most travel products make users do the assembly work:
+- find a destination
+- compare flights
+- compare stays
+- guess which meals and activities fit the budget
+- manually piece together an itinerary
+
+VoyageIQ takes a different product stance:
+- ask for minimal input
+- generate complete trip scenarios
+- make tradeoffs legible
+- keep core math deterministic and explainable
+- preserve a clean path from seeded planning to live provider data
+
+That makes it a strong portfolio project because it combines:
+- product thinking
+- full-stack implementation
+- typed domain modeling
+- adapter-based architecture
+- deterministic pricing logic
+- deployable production workflow
+
+## What The App Does
+
+- Accepts a destination, origin, traveler count, and trip length
+- Generates multiple trip scenarios such as lean, balanced, elevated, and signature
+- Builds detailed trip outputs with:
+  - flight guidance
+  - lodging strategy
+  - restaurants
+  - activities
+  - arrival planning
+  - day-by-day itinerary flow
+  - total family cost, cost per traveler, and cost per day
+- Shows tradeoff deltas between scenarios
+- Uses a similarity helper to surface the nearest cheaper, premium, or convenience-first alternative
+- Supports Philippines-specific discovery with top-spot cards and outbound travel/video links
+- Uses direct place-page enrichment when Google Places data is available
+
+## Current Engineering Highlights
+
+- Next.js 16 App Router application deployed on Vercel
+- React 19 + TypeScript with strict typing
+- Deterministic scenario engine and pricing pipeline
+- Hybrid travel-data architecture:
+  - seeded destination intelligence for baseline planning
+  - live flight enrichment path
+  - live hotel enrichment path
+  - live Google Places enrichment for exact place pages
+- Adapter registry that keeps provider logic outside the UI
+- Lightweight persistence path with Drizzle + libSQL/Turso
+- Test coverage across adapters, domain logic, parsing, and planner flow
 
 ## Tech Stack
+
 ![Next.js](https://img.shields.io/badge/Next.js-16-111827?style=flat-square)
 ![React](https://img.shields.io/badge/React-19-0b7285?style=flat-square)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-2563eb?style=flat-square)
@@ -10,45 +70,169 @@
 ![Drizzle](https://img.shields.io/badge/Drizzle-ORM-65a30d?style=flat-square)
 ![Turso](https://img.shields.io/badge/Turso-libSQL-f97316?style=flat-square)
 
-## What Exists
-- Minimal-input planner flow with destination, travel month, family size, trip length, and origin
-- Deterministic scenario engine with lean, balanced, and elevated trip strategies
-- Full itinerary, cost breakdown, booking timing, food, activity, and arrival planning cards
-- Weighted similarity helper for nearest cheaper, more premium, and more convenient alternatives
-- Adapter-based design for flights, lodging, food, and activities
-- Persistence endpoint and Turso-ready schema for saving generated strategies
+Primary libraries and services:
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
+- Framer Motion
+- Zod
+- Drizzle ORM
+- libSQL / Turso
+- Vercel
 
-## Setup
+External travel/provider integrations in the current codebase:
+- Travelpayouts for flight enrichment
+- Amadeus hotel path for lodging enrichment
+- Google Places for exact place-page enrichment
+
+## Product Architecture
+
+VoyageIQ is organized around a few clear layers:
+
+1. Intake layer
+   Converts lightweight user input into a typed trip request.
+
+2. Scenario engine
+   Generates coherent trip options using destination seeds, business rules, and deterministic pricing.
+
+3. Tradeoff engine
+   Scores scenarios and explains what improves or disappears as the user moves across budget/comfort levels.
+
+4. Provider/adapters layer
+   Normalizes third-party travel data behind typed interfaces so live sources can evolve without rewriting the UI.
+
+5. Verification layer
+   Attaches direct flight, hotel, restaurant, and activity links to the final scenario output.
+
+6. Persistence layer
+   Saves generated plans and selected scenarios with a small-footprint database approach suitable for Vercel.
+
+For a more detailed breakdown, see [docs/architecture.md](/C:/Users/lily7/Claude%20Code%20Projects/VoyageIQ/docs/architecture.md).
+
+## Repo Structure
+
+```text
+app/          Next.js routes, pages, and API endpoints
+components/   UI, planner, and result views
+adapters/     External provider integrations and normalization
+domain/       Core trip, pricing, and scenario logic
+features/     Search parsing and scenario presentation helpers
+server/       Service orchestration and repositories
+drizzle/      Schema and database config
+tests/        Adapter, domain, integration, and server tests
+docs/         Architecture and product/design notes
+```
+
+## Local Setup
+
+1. Install dependencies
+
+```bash
+npm install
+```
+
+2. Copy environment variables
 
 ```bash
 copy .env.example .env.local
-npm install
+```
+
+3. Start the app
+
+```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+4. Open the local site
 
-## Database
+```text
+http://localhost:3000
+```
 
-Local development can use the file-backed default in `.env.local`:
+## Environment Variables
+
+Minimal local setup:
 
 ```bash
 TURSO_DATABASE_URL=file:./voyageiq.db
+NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
-For production on Vercel, point `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` to a Turso database.
-
-To push the schema:
+Optional or production integrations:
 
 ```bash
-npm run db:push
+TURSO_AUTH_TOKEN=
+GOOGLE_PLACES_API_KEY=
+AMADEUS_CLIENT_ID=
+AMADEUS_CLIENT_SECRET=
+TRAVELPAYOUTS_API_TOKEN=
 ```
 
-## Project Direction
+Behavior by environment:
+- If live provider credentials are missing, VoyageIQ falls back to seeded planning data
+- If `GOOGLE_PLACES_API_KEY` is present, exact place-page enrichment is used for lodging, dining, and activities
+- If Turso credentials are present, saved trip data can persist in production across restarts
 
-VoyageIQ is intentionally not an Expedia clone. The current scaffold is designed around:
-- intake engine
-- scenario engine
-- tradeoff engine
+## Available Scripts
 
-That lets the app stay cheap, modular, and explainable while keeping a clean path to live provider integrations later.
+```bash
+npm run dev
+npm run build
+npm run start
+npm run lint
+npm run typecheck
+npm run test
+npm run db:generate
+npm run db:push
+npm run db:studio
+```
+
+## Testing
+
+Current tests cover:
+- adapter behavior
+- destination lookup
+- planner input parsing
+- server cache behavior
+- planner integration flow
+
+Run all tests:
+
+```bash
+npm run test
+```
+
+## Engineering Decisions Worth Calling Out
+
+- Core cost math is deterministic, not LLM-generated
+- Similarity is used as a helper, not the core planner engine
+- The UI stays thin; business logic lives in domain and server modules
+- Provider integrations are modular and replaceable
+- The app is Vercel-friendly and avoids depending on production filesystem persistence
+- User-facing outputs are traceable back to explicit scenario inputs and rules
+
+## Roadmap
+
+High-value next steps:
+- stronger live provider coverage across more destinations
+- richer family/traveler preference modeling
+- more diverse itinerary day archetypes
+- saved trips/history view
+- better caching and rate-limit handling for provider APIs
+- deeper direct-booking and mapping integrations
+
+## Documentation
+
+- Project operating guide: [CLAUDE.md](/C:/Users/lily7/Claude%20Code%20Projects/VoyageIQ/CLAUDE.md)
+- Architecture overview: [docs/architecture.md](/C:/Users/lily7/Claude%20Code%20Projects/VoyageIQ/docs/architecture.md)
+- UX/design planning notes: [docs/superpowers/specs/2026-03-15-voyageiq-ux-overhaul-design.md](/C:/Users/lily7/Claude%20Code%20Projects/VoyageIQ/docs/superpowers/specs/2026-03-15-voyageiq-ux-overhaul-design.md)
+
+## Employer Notes
+
+If you are reviewing this project as an employer, the strongest things to look at are:
+- the separation between product logic and provider integrations
+- the deterministic pricing/tradeoff architecture
+- the typed domain modeling
+- the quality of the Vercel deployment workflow
+- the way the app moves from seeded planning to live enrichment without collapsing into a monolith
