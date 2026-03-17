@@ -4,6 +4,20 @@ Constraint-aware travel optimization that turns minimal input into a full trip s
 
 Live app: [voyageiq-three.vercel.app](https://voyageiq-three.vercel.app)
 
+## Demo
+
+![VoyageIQ hero planner](public/readme/home-hero.png)
+
+![VoyageIQ strategy output](public/readme/strategy-output.png)
+
+## At A Glance
+
+- Strategy-first travel planner, not a booking-filter clone
+- Generates complete trip scenarios from lightweight user input
+- Combines deterministic pricing with live provider enrichment
+- Ships as a Vercel-ready full-stack TypeScript application
+- Designed to demonstrate product thinking, system design, and clean engineering boundaries
+
 ## Why This Project Matters
 
 VoyageIQ is intentionally not a booking-filter clone.
@@ -110,6 +124,21 @@ VoyageIQ is organized around a few clear layers:
 
 For a more detailed breakdown, see [docs/architecture.md](/C:/Users/lily7/Claude%20Code%20Projects/VoyageIQ/docs/architecture.md).
 
+### Architecture Diagram
+
+```mermaid
+flowchart LR
+    A["Minimal Input UI"] --> B["Planner Input Parsing"]
+    B --> C["Destination Resolution"]
+    C --> D["Scenario Generation"]
+    D --> E["Deterministic Pricing + Rule Scoring"]
+    E --> F["Similarity Helper"]
+    F --> G["Provider Registry"]
+    G --> H["Verification + Live Enrichment"]
+    H --> I["Scenario Explorer UI"]
+    I --> J["Saved Trips / Persistence"]
+```
+
 ## Repo Structure
 
 ```text
@@ -212,6 +241,52 @@ npm run test
 - The app is Vercel-friendly and avoids depending on production filesystem persistence
 - User-facing outputs are traceable back to explicit scenario inputs and rules
 
+## Engineering Challenges
+
+### 1. Turning Travel Planning Into A Typed System
+
+The hardest product problem was not rendering cards. It was defining a clean internal model for:
+- destinations
+- trip scenarios
+- tradeoff changes
+- cost breakdowns
+- provider verification links
+
+That modeling work lives in the domain layer and makes the app easier to extend without turning into a UI-first monolith.
+
+### 2. Mixing Seeded Planning With Live Data
+
+VoyageIQ is intentionally built so the planner still works when live APIs are missing or fail.
+
+The result is a hybrid system:
+- seeded destination intelligence guarantees baseline scenario generation
+- live provider data enriches the final output when credentials are present
+- fallbacks keep the app usable and demoable at all times
+
+That is a more production-aware architecture than hard-depending on every external API from day one.
+
+### 3. Making Tradeoffs Explainable
+
+It was important that the product not feel like a black box.
+
+Instead of a single “best” answer, the app:
+- computes multiple scenarios
+- scores them with explicit business logic
+- uses similarity only after scoring
+- explains what changes when the user moves toward cheaper or more premium options
+
+That creates a better product story and a more defensible engineering design.
+
+### 4. Keeping The Repo Employer-Friendly
+
+This project was organized to be easy to review:
+- domain logic is separated from UI
+- external provider concerns are isolated in adapters
+- orchestration lives in server services
+- documentation is maintained alongside implementation
+
+That was a deliberate engineering choice, not an afterthought.
+
 ## Roadmap
 
 High-value next steps:
@@ -236,3 +311,8 @@ If you are reviewing this project as an employer, the strongest things to look a
 - the typed domain modeling
 - the quality of the Vercel deployment workflow
 - the way the app moves from seeded planning to live enrichment without collapsing into a monolith
+
+This repo is meant to show how I think as a student engineer:
+- I care about product framing, not just implementation
+- I use structure and documentation to keep complexity under control
+- I can build something user-facing while still respecting architecture, testing, and deployment concerns
