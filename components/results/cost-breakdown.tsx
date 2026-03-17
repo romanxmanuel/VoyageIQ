@@ -3,6 +3,8 @@ import { formatCurrency } from "@/lib/formatters";
 
 interface CostBreakdownProps {
   cost: CostBreakdownType;
+  hasLiveFlightPrice?: boolean;
+  flightPricingSource?: "seeded" | "travelpayouts" | "amadeus" | "public-verifier";
 }
 
 const rows: Array<{ key: keyof CostBreakdownType; label: string }> = [
@@ -15,7 +17,11 @@ const rows: Array<{ key: keyof CostBreakdownType; label: string }> = [
   { key: "contingencyBuffer", label: "Contingency buffer" }
 ];
 
-export function CostBreakdown({ cost }: CostBreakdownProps) {
+export function CostBreakdown({
+  cost,
+  hasLiveFlightPrice = false,
+  flightPricingSource = "seeded"
+}: CostBreakdownProps) {
   return (
     <div className="space-y-3">
       {rows.map((row) => (
@@ -24,7 +30,13 @@ export function CostBreakdown({ cost }: CostBreakdownProps) {
           <span className="font-medium text-white">{formatCurrency(cost[row.key])}</span>
         </div>
       ))}
-      <p className="text-xs text-white/40 mt-2">Prices are live and may change at time of booking.</p>
+      <p className="mt-2 text-xs text-white/40">
+        {flightPricingSource === "public-verifier"
+          ? "Budget flight pricing was checked against a live public compare source. Verify the final fare on the compare link before booking."
+          : hasLiveFlightPrice
+          ? "Flight pricing is live for this route and may still change at booking."
+          : "Flight pricing is an estimate for this route. Use the compare link to check the current cheapest fare before booking."}
+      </p>
     </div>
   );
 }

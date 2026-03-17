@@ -1,4 +1,4 @@
-import { resolveIataCode } from "@/domain/trip/data/iata-city-map";
+import { resolveIataCodeFuzzy } from "@/domain/trip/data/iata-city-map";
 
 const ORIGIN_AIRPORT_CODES: Array<{ tokens: string[]; code: string }> = [
   { tokens: ["orlando", "mco"], code: "MCO" },
@@ -33,7 +33,19 @@ export function guessAirportCode(origin: string): string {
     e.tokens.some((t) => normalized.includes(t))
   );
   if (matched) return matched.code;
-  return resolveIataCode(origin) ?? "";
+  return resolveIataCodeFuzzy(origin) ?? "";
+}
+
+function buildFlightQuery(origin: string, destination: string, departDate?: string, returnDate?: string, adults?: number) {
+  const parts = [
+    `flights from ${origin}`,
+    `to ${destination}`,
+    departDate ? `departing ${departDate}` : "",
+    returnDate ? `returning ${returnDate}` : "",
+    adults && adults > 1 ? `for ${adults} adults` : "",
+  ].filter(Boolean);
+
+  return `https://www.google.com/travel/flights?q=${encodeURIComponent(parts.join(" "))}`;
 }
 
 export function buildFlightSearchUrl(
@@ -41,10 +53,13 @@ export function buildFlightSearchUrl(
   destinationCode: string,
   departDate?: string,
   returnDate?: string,
-  adults?: number
+  adults?: number,
+  destinationLabel?: string
 ): string {
   const originCode = guessAirportCode(origin);
-  if (!originCode) return "https://www.google.com/travel/flights";
+  if (!originCode || !destinationCode) {
+    return buildFlightQuery(origin, destinationLabel ?? destinationCode ?? "your destination", departDate, returnDate, adults);
+  }
   const adultsSuffix = adults && adults > 1 ? `/${adults}adults` : "";
   if (departDate && returnDate) {
     return `https://www.kayak.com/flights/${originCode}-${destinationCode}/${departDate}/${returnDate}${adultsSuffix}`;
@@ -56,15 +71,18 @@ export function buildGoogleFlightsUrl(
   origin: string,
   destinationCode: string,
   departDate?: string,
-  returnDate?: string
+  returnDate?: string,
+  destinationLabel?: string
 ): string {
   const originCode = guessAirportCode(origin);
-  if (!originCode) return "https://www.google.com/travel/flights";
+  if (!originCode || !destinationCode) {
+    return buildFlightQuery(origin, destinationLabel ?? destinationCode ?? "your destination", departDate, returnDate);
+  }
   const base = `https://www.google.com/travel/flights?hl=en#flt=${originCode}.${destinationCode}`;
   if (departDate && returnDate) {
-    return `${base}.${departDate}*${destinationCode}.${originCode}.${returnDate}`;
+    return `${base}.${departDate}*${destinationCode}.${originCode}.${returnDate};c:USD;e:1;sd:1;t:f`;
   }
-  return base;
+  return `${base};c:USD;e:1;sd:1;t:f`;
 }
 
 export function buildBookingSearchUrl(

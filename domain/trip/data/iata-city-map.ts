@@ -17,7 +17,10 @@ const CITY_TO_IATA: Record<string, string> = {
   'tokyo': 'HND', 'osaka': 'KIX', 'kyoto': 'ITM',
   'sapporo': 'CTS', 'fukuoka': 'FUK', 'nagoya': 'NGO',
   // USA
-  'orlando': 'MCO', 'new york': 'JFK', 'nyc': 'JFK',
+  'orlando': 'MCO', 'new york': 'JFK', 'new york city': 'JFK', 'nyc': 'JFK',
+  'new jersey': 'EWR', 'nj': 'EWR', 'newark': 'EWR', 'jersey city': 'EWR',
+  'st louis': 'STL', 'st. louis': 'STL', 'st louis mo': 'STL', 'st. louis mo': 'STL', 'saint louis': 'STL',
+  'omaha': 'OMA', 'omaha nebraska': 'OMA', 'omaha, ne': 'OMA',
   'los angeles': 'LAX', 'la': 'LAX', 'san francisco': 'SFO',
   'chicago': 'ORD', 'miami': 'MIA', 'las vegas': 'LAS',
   'honolulu': 'HNL', 'waikiki': 'HNL', 'hawaii': 'HNL',
@@ -34,7 +37,7 @@ const CITY_TO_IATA: Record<string, string> = {
   'brussels': 'BRU', 'copenhagen': 'CPH', 'stockholm': 'ARN',
   'oslo': 'OSL', 'helsinki': 'HEL', 'warsaw': 'WAW',
   'munich': 'MUC', 'frankfurt': 'FRA',
-  'nice': 'NCE', 'venice': 'VCE', 'florence': 'FLR',
+  'nice': 'NCE', 'venice': 'VCE', 'florence': 'FLR', 'santorini': 'JTR',
   // Southeast Asia
   'bangkok': 'BKK', 'bali': 'DPS', 'denpasar': 'DPS',
   'singapore': 'SIN', 'kuala lumpur': 'KUL', 'kl': 'KUL',
@@ -53,7 +56,7 @@ const CITY_TO_IATA: Record<string, string> = {
   'colombo': 'CMB', 'maldives': 'MLE', 'male': 'MLE',
   'kathmandu': 'KTM', 'amman': 'AMM', 'beirut': 'BEY',
   // Americas
-  'cancun': 'CUN', 'mexico city': 'MEX', 'guadalajara': 'GDL',
+  'cancun': 'CUN', 'cancún': 'CUN', 'mexico city': 'MEX', 'guadalajara': 'GDL',
   'bogota': 'BOG', 'lima': 'LIM', 'quito': 'UIO',
   'buenos aires': 'EZE', 'rio de janeiro': 'GIG', 'rio': 'GIG',
   'sao paulo': 'GRU', 'santiago': 'SCL', 'medellin': 'MDE',
@@ -67,6 +70,36 @@ const CITY_TO_IATA: Record<string, string> = {
   'marrakech': 'RAK', 'tunis': 'TUN', 'accra': 'ACC',
 }
 
+function normalizeCityName(value: string) {
+  return value.toLowerCase().trim()
+}
+
 export function resolveIataCode(cityName: string): string | null {
-  return CITY_TO_IATA[cityName.toLowerCase().trim()] ?? null
+  return CITY_TO_IATA[normalizeCityName(cityName)] ?? null
+}
+
+export function resolveIataCodeFuzzy(cityName: string): string | null {
+  const normalized = normalizeCityName(cityName)
+  if (!normalized) return null
+
+  const direct = resolveIataCode(normalized)
+  if (direct) return direct
+
+  const commaParts = normalized
+    .split(",")
+    .map((part) => part.trim())
+    .filter(Boolean)
+
+  for (const part of commaParts) {
+    const match = resolveIataCode(part)
+    if (match) return match
+  }
+
+  const sortedCandidates = Object.keys(CITY_TO_IATA).sort((left, right) => right.length - left.length)
+  const embedded = sortedCandidates.find((candidate) => normalized.includes(candidate))
+  return embedded ? CITY_TO_IATA[embedded] : null
+}
+
+export function getKnownIataLocations() {
+  return Object.entries(CITY_TO_IATA).map(([name, code]) => ({ name, code }))
 }

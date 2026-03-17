@@ -5,9 +5,9 @@ import { sorsogonDestination } from "@/domain/trip/data/philippines-sorsogon";
 import { nagaDestination } from "@/domain/trip/data/philippines-naga";
 import { cebuDestination } from "@/domain/trip/data/philippines-cebu";
 import { davaoDestination } from "@/domain/trip/data/philippines-davao";
-import { DestinationMatch, DestinationSeed } from "@/domain/trip/types";
+import { DestinationMatch, DestinationSeed, DestinationSuggestion } from "@/domain/trip/types";
 import { createGenericDestinationSeed } from "@/domain/trip/data/generic-destination";
-import { resolveIataCode } from "@/domain/trip/data/iata-city-map";
+import { resolveIataCodeFuzzy } from "@/domain/trip/data/iata-city-map";
 
 const philippinesCityDestinations: DestinationSeed[] = [
   manilaDestination,
@@ -37,29 +37,56 @@ function scoreDestination(query: string, destination: DestinationSeed) {
     return 100;
   }
 
-  const aliasPartial = destination.aliases.find(
-    (alias) => normalize(alias).includes(normalizedQuery) || normalizedQuery.includes(normalize(alias))
-  );
+  const aliasPrefix = destination.aliases.find((alias) => {
+    const normalizedAlias = normalize(alias);
+    return (
+      normalizedAlias.startsWith(normalizedQuery) ||
+      normalizedAlias.split(/\s+/).some((token) => token.startsWith(normalizedQuery))
+    );
+  });
 
-  if (aliasPartial) {
+  if (aliasPrefix) {
     return 70;
   }
 
   return normalizedQuery
     .split(/\s+/)
-    .filter((token) => destination.aliases.some((alias) => normalize(alias).includes(token)))
+    .filter((token) =>
+      destination.aliases.some((alias) => {
+        const normalizedAlias = normalize(alias);
+        return (
+          normalizedAlias.startsWith(token) ||
+          normalizedAlias.split(/\s+/).some((aliasToken) => aliasToken.startsWith(token))
+        );
+      })
+    )
     .length;
 }
 
-export function getFeaturedDestinations() {
-  return [philippinesFeaturedDestination, ...coreDestinations.map((destination) => ({
-    slug: destination.slug,
-    name: destination.name,
+function buildSeedSuggestion(destination: DestinationSeed): DestinationSuggestion {
+  return {
+    placeId: `seed:${destination.slug}`,
+    description: `${destination.name}, ${destination.country}`,
+    mainText: destination.name,
+    secondaryText: destination.country,
     country: destination.country,
-    summary: destination.summary,
-    tourismUrl: destination.tourismUrl,
-    airportCode: destination.airportCode
-  }))];
+    iataCode: destination.airportCode ?? null,
+    source: "seeded",
+  };
+}
+
+export function getFeaturedDestinations() {
+  return [
+    philippinesFeaturedDestination,
+    ...coreDestinations.map((destination) => ({
+      slug: destination.slug,
+      name: destination.name,
+      country: destination.country,
+      summary: destination.summary,
+      tourismUrl: destination.tourismUrl,
+      airportCode: destination.airportCode
+    }))
+  ];
 }
 
 export function getPhilippinesSpotlights() {
@@ -73,8 +100,44 @@ export function getPhilippinesSpotlights() {
   }));
 }
 
-export function resolveDestination(query: string): DestinationMatch {
+export function searchDestinationSuggestions(query: string): DestinationSuggestion[] {
   const normalizedQuery = normalize(query);
+
+  if (!normalizedQuery) {
+    return getFeaturedDestinations().map((destination) => ({
+      placeId: `seed:${destination.slug}`,
+      description: `${destination.name}, ${destination.country}`,
+      mainText: destination.name,
+      secondaryText: destination.country,
+      country: destination.country,
+      iataCode: destination.airportCode ?? null,
+      source: "seeded",
+    }));
+  }
+
+  return DESTINATIONS.filter((destination) => scoreDestination(normalizedQuery, destination) >= 70)
+    .sort((left, right) => scoreDestination(normalizedQuery, right) - scoreDestination(normalizedQuery, left))
+    .slice(0, 6)
+    .map(buildSeedSuggestion)
+    .filter((candidate, index, all) => all.findIndex((item) => item.mainText === candidate.mainText) === index);
+}
+
+export function resolveDestination(
+  query: string,
+  overrides?: {
+    airportCode?: string;
+    country?: string;
+    label?: string;
+    source?: string;
+    placeId?: string;
+  }
+): DestinationMatch {
+  const normalizedQuery = normalize(query);
+  const overrideAirportCode = overrides?.airportCode?.trim() || "";
+  const overrideCountry = overrides?.country?.trim() || "";
+  const overrideLabel = overrides?.label?.trim() || query;
+  const overrideSource = overrides?.source?.trim() || "";
+  const overridePlaceId = overrides?.placeId?.trim() || "";
 
   if (normalizedQuery === "philippines") {
     return {
@@ -83,6 +146,8 @@ export function resolveDestination(query: string): DestinationMatch {
       normalizedQuery,
       matchedAlias: "philippines",
       isFallback: false,
+      isVerified: true,
+      isGeneric: false,
       helperText:
         'Matched "Philippines" to Boracay as the default seeded island strategy. Use the Philippines spots dropdown to switch to El Nido, Bohol, or Siargao.',
       iataCode: PHILIPPINES_DEFAULT.airportCode,
@@ -99,37 +164,43 @@ export function resolveDestination(query: string): DestinationMatch {
     .sort((left, right) => right.score - left.score);
 
   const bestMatch = ranked[0]?.destination || DESTINATIONS[0];
+  const bestScore = ranked[0]?.score ?? 0;
   const matchedAlias =
     bestMatch.aliases.find((alias) => normalize(alias) === normalizedQuery) ||
-    bestMatch.aliases.find(
-      (alias) => normalize(alias).includes(normalizedQuery) || normalizedQuery.includes(normalize(alias))
-    ) ||
+    bestMatch.aliases.find((alias) => {
+      const normalizedAlias = normalize(alias);
+      return normalizedAlias.startsWith(normalizedQuery);
+    }) ||
     bestMatch.aliases[0];
 
-  const isFallback = !normalizedQuery || ranked[0]?.score < 2;
+  if ((overrideSource === "google" && overridePlaceId && overrideLabel) || (!!overrideAirportCode && !!overrideLabel)) {
+    const iataCode = overrideAirportCode || resolveIataCodeFuzzy(`${overrideLabel}, ${overrideCountry}`) || "";
+    const genericSeed = createGenericDestinationSeed(
+      overrideLabel || query,
+      overrideCountry || "International",
+      iataCode,
+      { lat: 0, lng: 0 }
+    );
 
-  if (isFallback && normalizedQuery) {
-    // Try to resolve via IATA map for unsupported cities
-    const iataCode = resolveIataCode(normalizedQuery);
-    if (iataCode) {
-      const genericSeed = createGenericDestinationSeed(
-        query, // use original casing
-        "International",
-        iataCode,
-        { lat: 0, lng: 0 }
-      );
-      return {
-        destination: genericSeed,
-        originalQuery: query,
-        normalizedQuery,
-        matchedAlias: normalizedQuery,
-        isFallback: false,
-        helperText: `Planning your trip to ${query} with live flight prices via Aviasales.`,
-        iataCode,
-        cityCode: iataCode,
-        coordinates: { lat: 0, lng: 0 },
-      };
-    }
+    return {
+      destination: genericSeed,
+      originalQuery: query,
+      normalizedQuery,
+      matchedAlias: normalizedQuery,
+      isFallback: false,
+      isVerified: true,
+      isGeneric: true,
+      helperText: iataCode
+        ? `Planning your trip to ${overrideLabel || query} using the verified place you selected, with ${iataCode} as the flight anchor.`
+        : `Planning your trip to ${overrideLabel || query} using the verified place you selected.`,
+      iataCode,
+      cityCode: iataCode,
+      coordinates: { lat: 0, lng: 0 },
+    };
+  }
+
+  if (!normalizedQuery || bestScore < 2) {
+    throw new Error("Choose a real place from the suggestion list so VoyageIQ can verify the destination.");
   }
 
   return {
@@ -137,10 +208,10 @@ export function resolveDestination(query: string): DestinationMatch {
     originalQuery: query,
     normalizedQuery,
     matchedAlias,
-    isFallback,
-    helperText: isFallback
-      ? `Showing results for ${bestMatch.name} — type more specifically or choose from the Philippines quick-picks for an exact match.`
-      : `Matched your search to ${bestMatch.name} using "${matchedAlias}".`,
+    isFallback: false,
+    isVerified: true,
+    isGeneric: false,
+    helperText: `Matched your search to ${bestMatch.name} using "${matchedAlias}".`,
     iataCode: bestMatch.airportCode,
     cityCode: bestMatch.cityCode ?? bestMatch.airportCode,
     coordinates: bestMatch.coordinates ?? { lat: 0, lng: 0 },

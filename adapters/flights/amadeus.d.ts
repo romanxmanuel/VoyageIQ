@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 declare class Amadeus {
   constructor(opts: { clientId: string; clientSecret: string })
   shopping: {

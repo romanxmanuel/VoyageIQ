@@ -12,10 +12,11 @@ export class GooglePlacesActivityAdapter implements ActivitySearchAdapter {
           itemId: activity.id,
           provider: place?.websiteUri ? "Official Website" : "Google Maps",
           kind: "activity" as const,
-          label: place?.websiteUri ? "Open official website" : "Open activity in Google Maps",
+          label: place?.websiteUri ? "Official site" : "Open in Maps",
           url: place?.websiteUri ?? place?.googleMapsUri ?? buildMapsSearchUrl(activity.name, activity.address),
           note: `${activity.durationHours} hours with an estimated ${activity.estimatedPerPerson} per person cost.`,
-          direct: true
+          direct: true,
+          intent: place?.websiteUri ? "exact-booking" : "exact-place"
         } satisfies ActivitySearchResult;
       })
     );

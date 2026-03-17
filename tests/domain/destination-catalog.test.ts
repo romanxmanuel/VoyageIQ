@@ -29,4 +29,14 @@ describe('resolveDestination', () => {
     expect(match.destination.slug).toBe('davao')
     expect(match.iataCode).toBe('DVO')
   })
+  it('keeps custom destinations instead of snapping back to a seeded one', () => {
+    const match = resolveDestination('Santorini', {
+      airportCode: 'JTR',
+      country: 'Greece',
+      label: 'Santorini',
+    })
+    expect(match.destination.name).toBe('Santorini')
+    expect(match.iataCode).toBe('JTR')
+    expect(match.isFallback).toBe(false)
+  })
 })

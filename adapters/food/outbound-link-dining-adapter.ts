@@ -7,10 +7,13 @@ export class OutboundLinkDiningAdapter implements DiningSearchAdapter {
       itemId: spot.id,
       provider: "Google Maps",
       kind: "restaurant",
-      label: "Open in Google Maps",
+      title: spot.name,
+      address: spot.address,
+      label: "Open in Maps",
       url: buildMapsSearchUrl(spot.name, spot.address),
       note: `${spot.cuisine} spot around ${spot.estimatedPerPerson} per person.`,
-      direct: true
+      direct: true,
+      intent: "exact-place"
     }));
 
     return results;

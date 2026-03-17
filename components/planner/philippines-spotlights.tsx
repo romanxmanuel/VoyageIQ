@@ -8,64 +8,54 @@ interface PhilippinesSpotlightsProps {
   spots: DestinationSpotlight[];
 }
 
+function ActionChip({ href, label }: { href: string; label: string }) {
+  return (
+    <a
+      className="inline-flex items-center rounded-full border border-white/10 bg-white/6 px-3 py-1.5 text-xs font-medium text-slate-100 transition hover:border-cyan-300/30 hover:bg-cyan-300/12 hover:text-cyan-50"
+      href={href}
+      rel="noreferrer"
+      target="_blank"
+    >
+      {label}
+    </a>
+  );
+}
+
 export function PhilippinesSpotlights({ origin, spots }: PhilippinesSpotlightsProps) {
   return (
-    <div className="space-y-4">
-      <div className="space-y-2">
-        <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Philippines discovery</p>
-        <h3 className="font-display text-2xl text-white">Explore the spots people love watching first</h3>
-        <p className="text-sm leading-6 text-slate-300">
-          These cards are built for fast inspiration: watch the place, open the tourism guide, then jump straight into flights and stays.
+    <div className="space-y-3">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div className="space-y-1">
+          <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Philippines ideas</p>
+          <h3 className="font-display text-xl text-white sm:text-2xl">Quick places to browse first</h3>
+        </div>
+        <p className="max-w-xl text-sm text-slate-300">
+          Watch a quick video, check the destination, then jump straight into flights or stays.
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
         {spots.map((spot) => (
-          <div className="rounded-[24px] border border-white/10 bg-white/5 p-5" key={spot.slug}>
-            <div className="flex items-start justify-between gap-4">
+          <div className="rounded-[20px] border border-white/10 bg-white/5 p-4" key={spot.slug}>
+            <div className="flex items-start justify-between gap-3">
               <div>
-                <p className="font-display text-2xl text-white">{spot.name}</p>
-                <p className="text-sm text-slate-400">{spot.country}</p>
+                <p className="font-display text-xl text-white">{spot.name}</p>
+                <p className="text-xs text-slate-400">{spot.country}</p>
               </div>
               {spot.airportCode ? (
-                <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs uppercase tracking-[0.18em] text-cyan-50">
+                <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-2.5 py-1 text-[10px] uppercase tracking-[0.18em] text-cyan-50">
                   {spot.airportCode}
                 </span>
               ) : null}
             </div>
-            <p className="mt-3 text-sm leading-6 text-slate-300">{spot.summary}</p>
-            <div className="mt-4 flex flex-wrap gap-3 text-sm">
-              <a
-                className="text-cyan-50 underline underline-offset-4"
-                href={buildYouTubeSearchUrl(`${spot.name} Philippines travel vlog`)}
-                rel="noreferrer"
-                target="_blank"
-              >
-                Watch on YouTube
-              </a>
-              {spot.tourismUrl ? (
-                <a className="text-cyan-50 underline underline-offset-4" href={spot.tourismUrl} rel="noreferrer" target="_blank">
-                  Tourism guide
-                </a>
-              ) : null}
-              {spot.airportCode ? (
-                <a
-                  className="text-cyan-50 underline underline-offset-4"
-                  href={buildFlightSearchUrl(origin, spot.airportCode)}
-                  rel="noreferrer"
-                  target="_blank"
-                >
-                  Flights
-                </a>
-              ) : null}
-              <a
-                className="text-cyan-50 underline underline-offset-4"
-                href={buildBookingSearchUrl(spot.name, spot.country)}
-                rel="noreferrer"
-                target="_blank"
-              >
-                Stays
-              </a>
+
+            <p className="mt-2 line-clamp-3 text-sm leading-6 text-slate-300">{spot.summary}</p>
+
+            <div className="mt-3 flex flex-wrap gap-2">
+              <ActionChip href={buildYouTubeSearchUrl(`${spot.name} Philippines travel vlog`)} label="Watch" />
+              {spot.tourismUrl ? <ActionChip href={spot.tourismUrl} label="Guide" /> : null}
+              {spot.airportCode ? <ActionChip href={buildFlightSearchUrl(origin, spot.airportCode)} label="Flights" /> : null}
+              <ActionChip href={buildBookingSearchUrl(spot.name, spot.country)} label="Stays" />
             </div>
           </div>
         ))}

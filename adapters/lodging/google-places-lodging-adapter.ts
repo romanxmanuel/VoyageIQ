@@ -16,26 +16,29 @@ export class GooglePlacesLodgingAdapter implements LodgingSearchAdapter {
       {
         provider: place?.websiteUri ? "Official Website" : "Google Maps",
         kind: stayKind,
-        label: place?.websiteUri ? `Open ${scenario.stay.name} website` : `Open ${scenario.stay.name} in Maps`,
+        label: place?.websiteUri ? "Official site" : "Open in Maps",
         url: place?.websiteUri ?? place?.googleMapsUri ?? buildMapsSearchUrl(scenario.stay.name, scenario.stay.address),
         note: "Direct place page for the exact stay in this scenario.",
-        direct: true
+        direct: true,
+        intent: place?.websiteUri ? "exact-booking" : "exact-place"
       },
       {
         provider: "Booking.com",
         kind: "hotel",
-        label: `Compare hotels in ${match.destination.name}`,
+        label: "Compare hotels on Booking.com",
         url: buildBookingSearchUrl(match.destination.name, match.destination.country),
         note: "Compare nearby hotel inventory around the same base.",
-        direct: false
+        direct: false,
+        intent: "compare-options"
       },
       {
         provider: "Airbnb",
         kind: "airbnb",
-        label: `Compare Airbnb in ${match.destination.name}`,
+        label: "Compare Airbnb options",
         url: buildAirbnbSearchUrl(match.destination.name, match.destination.country),
         note: "Compare homes, villas, and larger family lodging.",
-        direct: false
+        direct: false,
+        intent: "compare-options"
       }
     ];
 
@@ -43,10 +46,11 @@ export class GooglePlacesLodgingAdapter implements LodgingSearchAdapter {
       results.push({
         provider: "Hostelworld",
         kind: "hostel",
-        label: `Compare hostels in ${match.destination.name}`,
+        label: "Compare hostels on Hostelworld",
         url: buildHostelworldSearchUrl(match.destination.name, match.destination.country),
         note: "Compare the lean scenario against dedicated hostel inventory.",
-        direct: false
+        direct: false,
+        intent: "compare-options"
       });
     }
 

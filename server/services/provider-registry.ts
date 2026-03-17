@@ -19,11 +19,12 @@ export interface ProviderRegistry {
 
 export function getProviderRegistry() {
   const hasGooglePlaces = Boolean(process.env.GOOGLE_PLACES_API_KEY ?? process.env.GOOGLE_MAPS_API_KEY);
+  const dining: DiningSearchAdapter = hasGooglePlaces ? new GooglePlacesDiningAdapter() : new OutboundLinkDiningAdapter();
 
   return {
     flights: new OutboundLinkFlightAdapter(),
     lodging: hasGooglePlaces ? new GooglePlacesLodgingAdapter() : new OutboundLinkLodgingAdapter(),
-    dining: hasGooglePlaces ? new GooglePlacesDiningAdapter() : new OutboundLinkDiningAdapter(),
+    dining,
     activities: hasGooglePlaces ? new GooglePlacesActivityAdapter() : new OutboundLinkActivityAdapter()
   } satisfies ProviderRegistry;
 }

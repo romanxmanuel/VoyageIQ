@@ -27,14 +27,16 @@ export class OutboundLinkLodgingAdapter implements LodgingSearchAdapter {
       {
         provider: "Google Maps",
         kind: stayKind,
-        label: `Open ${scenario.stay.name} in Maps`,
+        label: "Open in Maps",
         url: buildMapsSearchUrl(scenario.stay.name, scenario.stay.address),
         note: "Verify the exact stay, address, and nearby context.",
+        direct: true,
+        intent: "exact-place",
       },
       {
         provider: "Booking.com",
         kind: "hotel",
-        label: `Search stays in ${match.destination.name}`,
+        label: "Compare hotels on Booking.com",
         url: buildBookingSearchUrl(
           match.destination.name,
           match.destination.country,
@@ -43,11 +45,12 @@ export class OutboundLinkLodgingAdapter implements LodgingSearchAdapter {
           adults
         ),
         note: "Check comparable hotel and resort inventory around the recommended base.",
+        intent: "compare-options",
       },
       {
         provider: "Airbnb",
         kind: "airbnb",
-        label: `Search Airbnb in ${match.destination.name}`,
+        label: "Compare Airbnb options",
         url: buildAirbnbSearchUrl(
           match.destination.name,
           match.destination.country,
@@ -56,6 +59,7 @@ export class OutboundLinkLodgingAdapter implements LodgingSearchAdapter {
           adults
         ),
         note: "Use this when you want to compare villas, apartments, or family-size lodging.",
+        intent: "compare-options",
       },
     ];
 
@@ -63,9 +67,10 @@ export class OutboundLinkLodgingAdapter implements LodgingSearchAdapter {
       results.push({
         provider: "Hostelworld",
         kind: "hostel",
-        label: `Search hostels in ${match.destination.name}`,
+        label: "Compare hostels on Hostelworld",
         url: buildHostelworldSearchUrl(match.destination.name, match.destination.country),
         note: "Helpful when the lean scenario works best with hostel-style inventory.",
+        intent: "compare-options",
       });
     }
 

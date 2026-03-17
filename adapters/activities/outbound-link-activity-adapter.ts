@@ -7,10 +7,11 @@ export class OutboundLinkActivityAdapter implements ActivitySearchAdapter {
       itemId: activity.id,
       provider: "Google Maps",
       kind: "activity",
-      label: "Open activity in Google Maps",
+      label: "Open in Maps",
       url: buildMapsSearchUrl(activity.name, activity.address),
       note: `${activity.durationHours} hours with an estimated ${activity.estimatedPerPerson} per person cost.`,
-      direct: true
+      direct: true,
+      intent: "exact-place"
     }));
 
     return results;

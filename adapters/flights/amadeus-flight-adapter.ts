@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { ScenarioTier } from '@/domain/trip/types'
 import type { LiveFlightOffer } from './types'
 import { getAmadeusClient } from './amadeus-client'

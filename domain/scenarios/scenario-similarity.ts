@@ -24,18 +24,9 @@ function clamp(value: number, min = 0, max = 1) {
 }
 
 function getTierComfortBoost(label: string) {
-  if (label.toLowerCase().includes("signature")) {
-    return 0.92;
-  }
-
-  if (label.toLowerCase().includes("elevated")) {
-    return 0.76;
-  }
-
-  if (label.toLowerCase().includes("balanced")) {
-    return 0.58;
-  }
-
+  if (label.toLowerCase().includes("signature")) return 0.92;
+  if (label.toLowerCase().includes("elevated")) return 0.76;
+  if (label.toLowerCase().includes("balanced")) return 0.58;
   return 0.36;
 }
 
@@ -164,21 +155,87 @@ function buildTradeoffChanges(source: ScenarioFeatureVector, target: ScenarioFea
     .slice(0, 3);
 }
 
-function buildAlternativeSummary(kind: ScenarioAlternative["kind"], candidate: TripScenario, priceDelta: number, changes: TradeoffChange[]) {
-  const primaryChange = changes[0];
-  const direction = primaryChange.delta >= 0 ? "up" : "down";
-  const priceCopy =
-    priceDelta < 0 ? `saves $${Math.abs(priceDelta).toLocaleString()}` : `adds $${Math.abs(priceDelta).toLocaleString()}`;
-
-  if (kind === "closest-cheaper") {
-    return `${candidate.label} changes the least while ${priceCopy}, with the biggest shift in ${primaryChange.label} (${direction} ${Math.abs(primaryChange.delta).toFixed(2)}).`;
+function getFlightTradeoff(source: TripScenario, candidate: TripScenario) {
+  if (candidate.flight.stops > source.flight.stops) {
+    return "more stops on the flight";
   }
 
-  if (kind === "closest-premium") {
-    return `${candidate.label} is the nearest more premium move, mainly shifting ${primaryChange.label} while ${priceCopy}.`;
+  if (candidate.flight.stops < source.flight.stops) {
+    return "easier flights with fewer stops";
   }
 
-  return `${candidate.label} is the convenience-first alternative, mostly changing ${primaryChange.label} while ${priceCopy}.`;
+  if (candidate.flight.cabin !== source.flight.cabin) {
+    return candidate.flight.cabin.toLowerCase().includes("business") || candidate.flight.cabin.toLowerCase().includes("premium")
+      ? "a more comfortable flight"
+      : "a simpler flight cabin";
+  }
+
+  return "a similar flight setup";
+}
+
+function getHotelTradeoff(source: TripScenario, candidate: TripScenario) {
+  if (candidate.stay.nightlyRate > source.stay.nightlyRate) {
+    return "a better hotel area and nicer room";
+  }
+
+  if (candidate.stay.nightlyRate < source.stay.nightlyRate) {
+    return "a simpler hotel to lower the total cost";
+  }
+
+  return "a similar hotel setup";
+}
+
+function getFoodTradeoff(source: TripScenario, candidate: TripScenario) {
+  if (candidate.diningPlan.dailyBudgetPerTraveler > source.diningPlan.dailyBudgetPerTraveler) {
+    return "a stronger food plan";
+  }
+
+  if (candidate.diningPlan.dailyBudgetPerTraveler < source.diningPlan.dailyBudgetPerTraveler) {
+    return "less spent on food each day";
+  }
+
+  return "a similar food plan";
+}
+
+function getActivityTradeoff(source: TripScenario, candidate: TripScenario) {
+  if (candidate.activities.length > source.activities.length) {
+    return "more paid activities";
+  }
+
+  if (candidate.activities.length < source.activities.length) {
+    return "fewer paid activities";
+  }
+
+  return "a similar activity mix";
+}
+
+function formatPriceDelta(priceDelta: number) {
+  return priceDelta < 0
+    ? `save ${Math.abs(priceDelta).toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 })}`
+    : `spend ${Math.abs(priceDelta).toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 })} more`;
+}
+
+function buildAlternativeSummary(
+  kind: ScenarioAlternative["kind"],
+  source: TripScenario,
+  candidate: TripScenario,
+  priceDelta: number
+) {
+  if (kind === "save-money") {
+    return `This version helps you ${formatPriceDelta(priceDelta)} with ${getFlightTradeoff(source, candidate)}, ${getHotelTradeoff(source, candidate)}, and ${getActivityTradeoff(source, candidate)}.`;
+  }
+
+  if (kind === "easier-for-parents") {
+    return `This version makes the trip easier with ${getFlightTradeoff(source, candidate)}, less walking pressure, and ${getHotelTradeoff(source, candidate)}.`;
+  }
+
+  return `This version leans into comfort with ${getHotelTradeoff(source, candidate)}, ${getFoodTradeoff(source, candidate)}, and ${getActivityTradeoff(source, candidate)}.`;
+}
+
+function buildAlternativeHeading(kind: ScenarioAlternative["kind"]) {
+  if (kind === "save-money") return "Save money";
+  if (kind === "easier-for-parents") return "Easier for parents";
+  return "Better hotel and food";
 }
 
 function buildAlternative(
@@ -192,9 +249,10 @@ function buildAlternative(
 
   return {
     kind,
+    heading: buildAlternativeHeading(kind),
     scenarioId: candidate.id,
     label: candidate.label,
-    summary: buildAlternativeSummary(kind, candidate, priceDelta, changes),
+    summary: buildAlternativeSummary(kind, source, candidate, priceDelta),
     priceDelta,
     distance: Number(calculateWeightedDistance(source.featureVector, candidate.featureVector, input).toFixed(3)),
     changes
@@ -209,50 +267,53 @@ function sortByDistance(source: TripScenario, candidates: TripScenario[], input:
   );
 }
 
+function buildScenarioAlternatives(scenario: TripScenario, scenarios: TripScenario[], input: PlannerInput) {
+  const cheaperCandidates = sortByDistance(
+    scenario,
+    scenarios.filter((candidate) => candidate.id !== scenario.id && candidate.cost.totalTripCost < scenario.cost.totalTripCost),
+    input
+  );
+  const easierCandidates = sortByDistance(
+    scenario,
+    scenarios.filter(
+      (candidate) =>
+        candidate.id !== scenario.id &&
+        candidate.featureVector.transitConvenience >= scenario.featureVector.transitConvenience &&
+        candidate.featureVector.familyFriendliness >= scenario.featureVector.familyFriendliness &&
+        (candidate.cost.totalTripCost !== scenario.cost.totalTripCost || candidate.featureVector.transitConvenience !== scenario.featureVector.transitConvenience)
+    ),
+    input
+  );
+  const comfortCandidates = sortByDistance(
+    scenario,
+    scenarios.filter(
+      (candidate) =>
+        candidate.id !== scenario.id &&
+        (candidate.featureVector.comfort > scenario.featureVector.comfort || candidate.featureVector.foodQuality > scenario.featureVector.foodQuality)
+    ),
+    input
+  );
+
+  const requested = [
+    cheaperCandidates[0] ? buildAlternative("save-money", scenario, cheaperCandidates[0], input) : null,
+    easierCandidates[0] ? buildAlternative("easier-for-parents", scenario, easierCandidates[0], input) : null,
+    comfortCandidates[0] ? buildAlternative("better-hotel-and-food", scenario, comfortCandidates[0], input) : null
+  ].filter((item): item is ScenarioAlternative => Boolean(item));
+
+  const unique: ScenarioAlternative[] = [];
+  for (const alternative of requested) {
+    const duplicateScenario = unique.some((item) => item.scenarioId === alternative.scenarioId);
+    const nearlySamePrice = unique.some((item) => Math.abs(item.priceDelta - alternative.priceDelta) < 150);
+    if (duplicateScenario || nearlySamePrice) continue;
+    unique.push(alternative);
+  }
+
+  return unique;
+}
+
 export function attachScenarioSimilarity(scenarios: TripScenario[], input: PlannerInput) {
-  return scenarios.map((scenario) => {
-    const cheaperCandidates = sortByDistance(
-      scenario,
-      scenarios.filter((candidate) => candidate.id !== scenario.id && candidate.cost.totalTripCost < scenario.cost.totalTripCost),
-      input
-    );
-    const premiumCandidates = sortByDistance(
-      scenario,
-      scenarios.filter(
-        (candidate) =>
-          candidate.id !== scenario.id &&
-          candidate.cost.totalTripCost > scenario.cost.totalTripCost &&
-          candidate.featureVector.comfort >= scenario.featureVector.comfort
-      ),
-      input
-    );
-    const convenienceCandidates = sortByDistance(
-      scenario,
-      scenarios.filter(
-        (candidate) =>
-          candidate.id !== scenario.id &&
-          candidate.featureVector.transitConvenience > scenario.featureVector.transitConvenience
-      ),
-      input
-    );
-
-    const alternatives: ScenarioAlternative[] = [];
-
-    if (cheaperCandidates[0]) {
-      alternatives.push(buildAlternative("closest-cheaper", scenario, cheaperCandidates[0], input));
-    }
-
-    if (premiumCandidates[0]) {
-      alternatives.push(buildAlternative("closest-premium", scenario, premiumCandidates[0], input));
-    }
-
-    if (convenienceCandidates[0]) {
-      alternatives.push(buildAlternative("closest-convenience", scenario, convenienceCandidates[0], input));
-    }
-
-    return {
-      ...scenario,
-      alternatives
-    };
-  });
+  return scenarios.map((scenario) => ({
+    ...scenario,
+    alternatives: buildScenarioAlternatives(scenario, scenarios, input)
+  }));
 }

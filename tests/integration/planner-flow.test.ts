@@ -75,4 +75,62 @@ describe('Planner flow — seeded destinations', () => {
     expect(match.destination.slug).toBe('cebu')
     expect(match.iataCode).toBe('CEB')
   })
+
+  it('generates scenarios for a custom destination selected from autocomplete metadata', () => {
+    const match = resolveDestination('Santorini', {
+      airportCode: 'JTR',
+      country: 'Greece',
+      label: 'Santorini',
+    })
+
+    const input = {
+      destinationQuery: 'Santorini',
+      destination: 'Santorini',
+      resolvedDestinationLabel: 'Santorini',
+      resolvedDestinationAirportCode: 'JTR',
+      resolvedDestinationCountry: 'Greece',
+      origin: 'Orlando',
+      travelers: 2,
+      nights: 7,
+      preferDirectFlights: false,
+      preferLocalFood: false,
+      lowWalkingIntensity: false,
+    }
+    const scenarios = buildTripScenarios(input, match)
+    expect(match.destination.name).toBe('Santorini')
+    expect(scenarios).toHaveLength(4)
+  })
+
+  it('does not repeat named dinners or activity anchors within one itinerary when enough options exist', () => {
+    const match = resolveDestination('Tokyo')
+    const input = {
+      destinationQuery: 'Tokyo',
+      destination: 'Tokyo',
+      origin: 'Orlando',
+      travelers: 2,
+      nights: 6,
+      preferDirectFlights: false,
+      preferLocalFood: false,
+      lowWalkingIntensity: false,
+    }
+
+    const scenario = buildTripScenarios(input, match).find((item) => item.tier === 'signature')
+    expect(scenario).toBeDefined()
+
+    const dinnerTitles =
+      scenario?.itinerary
+        .flatMap((day) => day.stops)
+        .filter((stop) => stop.slot === 'Evening' && stop.title.startsWith('Dinner at '))
+        .map((stop) => stop.title) ?? []
+
+    const activityTitles =
+      scenario?.itinerary
+        .flatMap((day) => day.stops)
+        .filter((stop) => stop.slot === 'Afternoon')
+        .map((stop) => stop.title)
+        .filter((title) => scenario.activities.some((activity) => activity.name === title)) ?? []
+
+    expect(new Set(dinnerTitles).size).toBe(dinnerTitles.length)
+    expect(new Set(activityTitles).size).toBe(activityTitles.length)
+  })
 })

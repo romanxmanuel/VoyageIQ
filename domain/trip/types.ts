@@ -96,6 +96,8 @@ export interface DestinationMatch {
   normalizedQuery: string;
   matchedAlias: string;
   isFallback: boolean;
+  isVerified: boolean;
+  isGeneric: boolean;
   helperText: string;
   iataCode: string;
   cityCode: string;
@@ -104,6 +106,8 @@ export interface DestinationMatch {
 
 export interface FlightPlan extends FlightTemplate {
   totalCost: number;
+  pricingSource?: "seeded" | "travelpayouts" | "amadeus" | "public-verifier";
+  isLivePrice?: boolean;
 }
 
 export interface DiningPlan {
@@ -166,7 +170,8 @@ export interface TradeoffChange {
 }
 
 export interface ScenarioAlternative {
-  kind: "closest-cheaper" | "closest-premium" | "closest-convenience";
+  kind: "save-money" | "easier-for-parents" | "better-hotel-and-food";
+  heading: string;
   scenarioId: string;
   label: string;
   summary: string;
@@ -175,14 +180,19 @@ export interface ScenarioAlternative {
   changes: TradeoffChange[];
 }
 
+export type VerificationLinkIntent = "exact-booking" | "exact-place" | "compare-options";
+
 export interface VerificationLink {
   itemId?: string;
   provider: string;
   kind: VerificationLinkKind;
+  title?: string;
+  address?: string;
   label: string;
   url: string;
   note: string;
   direct?: boolean;
+  intent?: VerificationLinkIntent;
 }
 
 export interface ScenarioVerificationResources {
@@ -232,4 +242,14 @@ export interface DestinationSpotlight {
   summary: string;
   tourismUrl?: string;
   airportCode?: string;
+}
+
+export interface DestinationSuggestion {
+  placeId: string;
+  description: string;
+  mainText: string;
+  secondaryText: string;
+  country?: string;
+  iataCode: string | null;
+  source: "seeded" | "known-location" | "google";
 }
