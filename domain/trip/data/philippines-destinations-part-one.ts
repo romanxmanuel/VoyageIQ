@@ -177,7 +177,18 @@ export const philippinesDestinationsPartOne: DestinationSeed[] = [
         summary: "High-return, low-cost beach switch when you want calmer scenery without another paid tour.",
         fit: ["lean", "balanced", "elevated", "signature"]
       }
-    ]
+    ],
+    venues: {
+      activities: {},
+      dining: { casual: [], sitdown: [], premium: [] },
+      neighborhoods: { lean: "Station 2", balanced: "Station 2", elevated: "Bulabog", signature: "Yapak" }
+    },
+    flightFloors: {
+      orlando: { economy: 1200, premiumEconomy: 2400, business: 4500 },
+      "*": { economy: 1000, premiumEconomy: 2000, business: 3800 }
+    },
+    hotelFloors: { lean: 50, balanced: 150, elevated: 220, signature: 580 },
+    arrivalTransferCost: { low: 8, high: 20 }
   },
   {
     slug: "elnido",
@@ -355,6 +366,17 @@ export const philippinesDestinationsPartOne: DestinationSeed[] = [
         summary: "A signature-level convenience upgrade when avoiding crowd friction matters more than cost.",
         fit: ["elevated", "signature"]
       }
-    ]
+    ],
+    venues: {
+      activities: {},
+      dining: { casual: [], sitdown: [], premium: [] },
+      neighborhoods: { lean: "El Nido Town", balanced: "El Nido Town", elevated: "Corong Corong", signature: "Caalan" }
+    },
+    flightFloors: {
+      orlando: { economy: 1250, premiumEconomy: 2500, business: 4600 },
+      "*": { economy: 1050, premiumEconomy: 2100, business: 4000 }
+    },
+    hotelFloors: { lean: 45, balanced: 130, elevated: 220, signature: 650 },
+    arrivalTransferCost: { low: 10, high: 25 }
   }
 ];

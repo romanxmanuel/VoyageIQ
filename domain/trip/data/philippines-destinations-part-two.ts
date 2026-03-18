@@ -177,7 +177,18 @@ export const philippinesDestinationsPartTwo: DestinationSeed[] = [
         summary: "Strong premium water-day upgrade when the trip wants one major marine experience.",
         fit: ["balanced", "elevated", "signature"]
       }
-    ]
+    ],
+    venues: {
+      activities: {},
+      dining: { casual: [], sitdown: [], premium: [] },
+      neighborhoods: { lean: "Panglao", balanced: "Bolod Beach", elevated: "Bolod Beach", signature: "Alona Beach bluff" }
+    },
+    flightFloors: {
+      orlando: { economy: 1200, premiumEconomy: 2400, business: 4400 },
+      "*": { economy: 1000, premiumEconomy: 2000, business: 3800 }
+    },
+    hotelFloors: { lean: 38, balanced: 145, elevated: 210, signature: 490 },
+    arrivalTransferCost: { low: 8, high: 20 }
   },
   {
     slug: "siargao",
@@ -355,6 +366,17 @@ export const philippinesDestinationsPartTwo: DestinationSeed[] = [
         summary: "A premium but worthwhile upgrade if the trip wants one coached activity instead of only passive scenery.",
         fit: ["elevated", "signature"]
       }
-    ]
+    ],
+    venues: {
+      activities: {},
+      dining: { casual: [], sitdown: [], premium: [] },
+      neighborhoods: { lean: "General Luna", balanced: "General Luna", elevated: "General Luna beachfront", signature: "Malinao" }
+    },
+    flightFloors: {
+      orlando: { economy: 1200, premiumEconomy: 2400, business: 4500 },
+      "*": { economy: 1000, premiumEconomy: 2000, business: 3900 }
+    },
+    hotelFloors: { lean: 40, balanced: 140, elevated: 230, signature: 950 },
+    arrivalTransferCost: { low: 10, high: 22 }
   }
 ];

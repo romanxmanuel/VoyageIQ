@@ -108,4 +108,15 @@ export const manilaDestination: DestinationSeed = {
     { name: 'Rizal Park & National Museum', address: 'Roxas Blvd, Ermita, Manila', estimatedPerPerson: 2, durationHours: 2.5, travelMinutesFromCenter: 10, summary: "Philippines' national park + free national museum complex. Filipino history from pre-colonial to present.", fit: ['lean', 'balanced', 'elevated'] },
     { name: 'BGC Street Art Walk', address: 'Bonifacio Global City, Taguig', estimatedPerPerson: 0, durationHours: 1.5, travelMinutesFromCenter: 35, summary: "World-class outdoor murals across BGC's blocks. Combine with dinner at one of BGC's Filipino restaurants.", fit: ['balanced', 'elevated', 'signature'] },
   ],
+  venues: {
+    activities: {},
+    dining: { casual: [], sitdown: [], premium: [] },
+    neighborhoods: { lean: 'Ermita', balanced: 'Malate', elevated: 'BGC', signature: 'Makati CBD' }
+  },
+  flightFloors: {
+    orlando: { economy: 1200, premiumEconomy: 2400, business: 4500 },
+    '*': { economy: 1000, premiumEconomy: 2000, business: 3800 }
+  },
+  hotelFloors: { lean: 30, balanced: 60, elevated: 120, signature: 220 },
+  arrivalTransferCost: { low: 5, high: 18 }
 }

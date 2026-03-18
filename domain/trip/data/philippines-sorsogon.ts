@@ -106,4 +106,15 @@ export const sorsogonDestination: DestinationSeed = {
     { name: 'Rizal Beach and Sunset', address: 'Gubat, Sorsogon', estimatedPerPerson: 0, durationHours: 2, travelMinutesFromCenter: 30, summary: 'Long Pacific-facing beach. Empty most of the year.', fit: ['lean', 'balanced', 'elevated', 'signature'] },
     { name: 'Casiguran Caves', address: 'Casiguran, Sorsogon', estimatedPerPerson: 8, durationHours: 3, travelMinutesFromCenter: 45, summary: 'Cathedral cave with natural light shafts. Local guide required.', fit: ['balanced', 'elevated'] },
   ],
+  venues: {
+    activities: {},
+    dining: { casual: [], sitdown: [], premium: [] },
+    neighborhoods: { lean: 'Sorsogon City Center', balanced: 'Donsol', elevated: 'Matnog', signature: 'Ticao Island' }
+  },
+  flightFloors: {
+    orlando: { economy: 1000, premiumEconomy: 2000, business: 3700 },
+    '*': { economy: 850, premiumEconomy: 1700, business: 3400 }
+  },
+  hotelFloors: { lean: 18, balanced: 40, elevated: 80, signature: 150 },
+  arrivalTransferCost: { low: 4, high: 15 }
 }

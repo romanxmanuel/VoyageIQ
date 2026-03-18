@@ -106,4 +106,15 @@ export const davaoDestination: DestinationSeed = {
     { name: 'Samal Island Daytrip', address: 'Island Garden City of Samal (ferry from Santa Ana Wharf)', estimatedPerPerson: 20, durationHours: 6, travelMinutesFromCenter: 20, summary: 'Island escape with coral reefs, Hagimit Falls, and beaches. FastCat ferry takes 20 minutes from central Davao.', fit: ['balanced', 'elevated', 'signature'] },
     { name: "People's Park & Magsaysay Park", address: 'Davao City Center', estimatedPerPerson: 0, durationHours: 2, travelMinutesFromCenter: 5, summary: 'Durian-shaped dome, native plant collections, and bayfront park. Free, central, good for slow morning walks.', fit: ['lean', 'balanced', 'elevated', 'signature'] },
   ],
+  venues: {
+    activities: {},
+    dining: { casual: [], sitdown: [], premium: [] },
+    neighborhoods: { lean: 'City Center', balanced: 'Ecoland', elevated: 'Bajada', signature: 'City Center' }
+  },
+  flightFloors: {
+    orlando: { economy: 1100, premiumEconomy: 2200, business: 4200 },
+    '*': { economy: 900, premiumEconomy: 1800, business: 3500 }
+  },
+  hotelFloors: { lean: 18, balanced: 65, elevated: 105, signature: 200 },
+  arrivalTransferCost: { low: 5, high: 15 }
 }

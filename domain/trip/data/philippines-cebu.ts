@@ -106,4 +106,15 @@ export const cebuDestination: DestinationSeed = {
     { name: "Magellan's Cross & Basilica del Santo Niño", address: 'Magallanes St, Cebu City', estimatedPerPerson: 0, durationHours: 1.5, travelMinutesFromCenter: 10, summary: 'Oldest Christian landmark in the Philippines. Adjacent basilica houses the oldest religious icon. Free entry.', fit: ['lean', 'balanced', 'elevated', 'signature'] },
     { name: 'Moalboal Sardine Run + Diving', address: 'Panagsama Beach, Moalboal, Cebu', estimatedPerPerson: 45, durationHours: 5, travelMinutesFromCenter: 90, summary: 'Millions of sardines in a dense bait ball just offshore. World-class snorkeling.', fit: ['balanced', 'elevated', 'signature'] },
   ],
+  venues: {
+    activities: {},
+    dining: { casual: [], sitdown: [], premium: [] },
+    neighborhoods: { lean: 'Cebu City', balanced: 'Cebu City Center', elevated: 'Cebu City South', signature: 'Mactan Island' }
+  },
+  flightFloors: {
+    orlando: { economy: 1100, premiumEconomy: 2200, business: 4200 },
+    '*': { economy: 900, premiumEconomy: 1800, business: 3600 }
+  },
+  hotelFloors: { lean: 18, balanced: 60, elevated: 120, signature: 280 },
+  arrivalTransferCost: { low: 5, high: 15 }
 }

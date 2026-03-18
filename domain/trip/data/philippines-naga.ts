@@ -106,4 +106,15 @@ export const nagaDestination: DestinationSeed = {
     { name: 'Mt. Isarog National Park', address: 'Pili, Camarines Sur (near Naga)', estimatedPerPerson: 15, durationHours: 6, travelMinutesFromCenter: 30, summary: 'Active volcano trekking through primary forest. Short peak at 1966m. Local guide required.', fit: ['balanced', 'elevated'] },
     { name: 'Naga City Food Walk (self-guided)', address: 'City Center, Naga', estimatedPerPerson: 12, durationHours: 2.5, travelMinutesFromCenter: 0, summary: "Walk from the public market to Waway's to pili nut stalls to a karinderya. Bicol has the most complex regional cuisine in the Philippines.", fit: ['lean', 'balanced', 'elevated'] },
   ],
+  venues: {
+    activities: {},
+    dining: { casual: [], sitdown: [], premium: [] },
+    neighborhoods: { lean: 'City Center', balanced: 'Naga City Center', elevated: 'Naga City', signature: 'Residential Naga' }
+  },
+  flightFloors: {
+    orlando: { economy: 1000, premiumEconomy: 2000, business: 3800 },
+    '*': { economy: 850, premiumEconomy: 1700, business: 3500 }
+  },
+  hotelFloors: { lean: 18, balanced: 45, elevated: 85, signature: 130 },
+  arrivalTransferCost: { low: 4, high: 12 }
 }
