@@ -1,5 +1,6 @@
 import { discoverGoogleDiningPlaces } from "@/adapters/food/google-places-dining-discovery";
 import { searchGooglePlaces } from "@/adapters/maps/google-places-text-search";
+import { enrichGenericDestinationContent } from "@/adapters/ai/claude-enrichment-adapter";
 import { DestinationSeed, ScenarioTier } from "@/domain/trip/types";
 
 const ACTIVITY_COSTS = [0, 18, 28, 42, 65, 95];
@@ -86,6 +87,16 @@ export async function hydrateGenericDestinationSeed(seed: DestinationSeed) {
       summary: `Real place pulled for ${seed.name}. Open it, check reviews, and decide if it fits your trip style.`,
       fit: buildTierFits(index)
     }));
+  }
+
+  const enriched = await enrichGenericDestinationContent(seed.name, seed.country ?? "");
+  if (enriched) {
+    nextSeed.venues = {
+      activities: enriched.activities,
+      dining: enriched.dining,
+      neighborhoods: enriched.neighborhoods,
+      travelIntel: enriched.travelIntel
+    };
   }
 
   return nextSeed;
