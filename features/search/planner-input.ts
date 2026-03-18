@@ -36,6 +36,7 @@ const plannerSearchSchema = z.object({
   preferLocalFood: booleanFromString,
   lowWalkingIntensity: booleanFromString,
   departureDate: optionalDateString,
+  tier: z.enum(["lean", "balanced", "elevated", "signature"]).optional(),
 });
 
 export type PlannerInput = z.infer<typeof plannerSearchSchema> & {
@@ -69,6 +70,7 @@ export function parsePlannerSearchParams(searchParams: RawSearchParams): Planner
     preferLocalFood: pickFirst(searchParams.preferLocalFood),
     lowWalkingIntensity: pickFirst(searchParams.lowWalkingIntensity),
     departureDate: pickFirst(searchParams.departureDate),
+    tier: pickFirst(searchParams.tier),
   });
 
   if (!parsed.success || !parsed.data.destination) return null;
@@ -106,5 +108,6 @@ export function getDefaultPlannerInput(): PlannerInput {
     preferLocalFood: false,
     lowWalkingIntensity: false,
     departureDate: undefined,
+    tier: undefined,
   };
 }

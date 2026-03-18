@@ -154,7 +154,8 @@ async function enrichScenariosWithLiveData(
         lodgingTotal: scenario.stay.nightlyRate * input.nights,
         dailyFoodPerTraveler: scenario.diningPlan.dailyBudgetPerTraveler,
         activitiesTotal,
-        transitPerDay
+        transitPerDay,
+        arrivalTransferTotal: scenario.cost.arrivalTransferTotal
       });
     }
   } catch (error) {
@@ -198,9 +199,15 @@ export async function buildPlannerViewModel(input: PlannerInput): Promise<Planne
   const verifiedScenarios = await attachScenarioVerification(scoredScenarios, normalizedInput, match);
   const reorderedScenarios = applyPreferenceScoring(verifiedScenarios, normalizedInput);
 
-  const selectedScenarioIndex = reorderedScenarios.reduce((bestIndex, scenario, index, all) => {
-    return scenario.ruleScore > all[bestIndex].ruleScore ? index : bestIndex;
-  }, Math.min(1, reorderedScenarios.length - 1));
+  const requestedTierIndex = input.tier
+    ? reorderedScenarios.findIndex((s) => s.tier === input.tier)
+    : -1;
+  const selectedScenarioIndex =
+    requestedTierIndex >= 0
+      ? requestedTierIndex
+      : reorderedScenarios.reduce((bestIndex, scenario, index, all) => {
+          return scenario.ruleScore > all[bestIndex].ruleScore ? index : bestIndex;
+        }, Math.min(1, reorderedScenarios.length - 1));
 
   return {
     constraints: deriveTripConstraints(normalizedInput),
