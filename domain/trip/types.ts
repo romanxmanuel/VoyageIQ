@@ -69,6 +69,30 @@ export interface ActivityOption {
   verificationLink?: VerificationLink;
 }
 
+export interface VenueActivity {
+  name: string;
+  neighborhood: string;
+  estimatedPerPerson: number;
+  durationHours: number;
+  description: string;
+}
+
+export interface VenueDining {
+  name: string;
+  neighborhood: string;
+  cuisine: string;
+  estimatedPerPerson: number;
+  description: string;
+}
+
+export interface TravelIntel {
+  bestMonths: string;
+  visaNote: string;
+  currency: string;
+  transitTip: string;
+  arrivalNote: string;
+}
+
 export interface DestinationSeed {
   slug: string;
   name: string;
@@ -88,6 +112,19 @@ export interface DestinationSeed {
   stays: Record<ScenarioTier, StayOption>;
   dining: DiningSpot[];
   activities: ActivityOption[];
+  venues?: {
+    activities: Partial<Record<ScenarioTier, VenueActivity[]>>;
+    dining: {
+      casual: VenueDining[];
+      sitdown: VenueDining[];
+      premium: VenueDining[];
+    };
+    neighborhoods: Partial<Record<ScenarioTier, string>>;
+    travelIntel?: TravelIntel;
+  };
+  flightFloors?: Record<string, { economy: number; premiumEconomy: number; business: number }>;
+  hotelFloors?: Partial<Record<ScenarioTier, number>>;
+  arrivalTransferCost?: { low: number; high: number };
 }
 
 export interface DestinationMatch {
@@ -125,6 +162,7 @@ export interface CostBreakdown {
   foodTotal: number;
   activitiesTotal: number;
   localTransitTotal: number;
+  arrivalTransferTotal: number;
   taxesAndFees: number;
   contingencyBuffer: number;
   totalTripCost: number;

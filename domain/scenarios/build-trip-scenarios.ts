@@ -443,7 +443,8 @@ export function buildTripScenarios(input: PlannerInput, match: DestinationMatch)
       lodgingTotal,
       dailyFoodPerTraveler: dailyBudgetPerTraveler,
       activitiesTotal,
-      transitPerDay
+      transitPerDay,
+      arrivalTransferTotal: 0
     });
 
     const flight: FlightPlan = {
