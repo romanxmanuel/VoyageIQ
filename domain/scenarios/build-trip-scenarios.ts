@@ -4,12 +4,15 @@ import {
   ActivityOption,
   ActivityPlan,
   DestinationMatch,
+  DestinationSeed,
   DiningSpot,
   FlightPlan,
   ItineraryDay,
   PlannerInput,
   ScenarioTier,
-  TripScenario
+  TripScenario,
+  VenueActivity,
+  VenueDining
 } from "@/domain/trip/types";
 
 const SCENARIO_META: Record<
@@ -83,6 +86,38 @@ const ORIGIN_BASELINES: Record<string, number> = {
   sanfrancisco: 0.9,
   seattle: 0.88
 };
+
+const TIER_CABIN: Record<ScenarioTier, "economy" | "premiumEconomy" | "business"> = {
+  lean: "economy",
+  balanced: "economy",
+  elevated: "premiumEconomy",
+  signature: "business"
+};
+
+function applyFlightFloor(
+  airfarePerTraveler: number,
+  tier: ScenarioTier,
+  destination: DestinationSeed,
+  origin: string
+): number {
+  if (!destination.flightFloors) return airfarePerTraveler;
+  const normalizedOrigin = origin.toLowerCase().replace(/\s+/g, "");
+  const floors =
+    destination.flightFloors[normalizedOrigin] ??
+    destination.flightFloors["*"];
+  if (!floors) return airfarePerTraveler;
+  return Math.max(airfarePerTraveler, floors[TIER_CABIN[tier]]);
+}
+
+function applyHotelFloor(
+  nightlyRate: number,
+  tier: ScenarioTier,
+  destination: DestinationSeed
+): number {
+  const floor = destination.hotelFloors?.[tier];
+  if (floor === undefined) return nightlyRate;
+  return Math.max(nightlyRate, floor);
+}
 
 const FLEXIBLE_DAY_THEMES = [
   {
@@ -212,6 +247,83 @@ function pickActivities(activities: ActivityOption[], tier: ScenarioTier, nights
       id: activity.id ?? buildEntityId("activity", `${activity.name}-${activity.address}`),
       totalCost: activity.estimatedPerPerson
     }));
+}
+
+function toActivityPlanFromVenue(v: VenueActivity, tier: ScenarioTier): ActivityPlan {
+  return {
+    id: buildEntityId("venue-activity", `${v.name}-${v.neighborhood}`),
+    name: v.name,
+    address: v.neighborhood,
+    estimatedPerPerson: v.estimatedPerPerson,
+    durationHours: v.durationHours,
+    travelMinutesFromCenter: 20,
+    summary: v.description,
+    fit: [tier],
+    totalCost: v.estimatedPerPerson
+  };
+}
+
+function resolveActivities(
+  destination: DestinationSeed,
+  tier: ScenarioTier,
+  nights: number
+): ActivityPlan[] {
+  const venueActivities = destination.venues?.activities[tier];
+  if (venueActivities?.length) {
+    const count = Math.min(Math.max(2, nights - 1), SCENARIO_META[tier].activityCount);
+    return venueActivities.slice(0, count).map((v) => toActivityPlanFromVenue(v, tier));
+  }
+  return pickActivities(destination.activities, tier, nights);
+}
+
+function toDiningSpotFromVenue(v: VenueDining, tier: ScenarioTier): DiningSpot {
+  return {
+    id: buildEntityId("venue-dining", `${v.name}-${v.neighborhood}`),
+    name: v.name,
+    cuisine: v.cuisine,
+    address: v.neighborhood,
+    estimatedPerPerson: v.estimatedPerPerson,
+    signatureOrder: v.description,
+    fit: [tier]
+  };
+}
+
+function resolveDiningHighlights(
+  destination: DestinationSeed,
+  tier: ScenarioTier,
+  nights: number
+): DiningSpot[] {
+  const venuesDining = destination.venues?.dining;
+  if (!venuesDining) return pickDiningHighlights(destination.dining, tier, nights);
+
+  const limit = Math.min(Math.max(5, Math.min(nights + 2, 8)), 8);
+  const catOrder: Array<"casual" | "sitdown" | "premium"> =
+    tier === "lean"
+      ? ["casual"]
+      : tier === "balanced"
+      ? ["sitdown", "casual"]
+      : tier === "elevated"
+      ? ["sitdown", "premium"]
+      : ["premium", "sitdown"];
+
+  const spots: DiningSpot[] = [];
+  for (const cat of catOrder) {
+    spots.push(...venuesDining[cat].map((v) => toDiningSpotFromVenue(v, tier)));
+  }
+  return spots.slice(0, limit);
+}
+
+function resolveDiningPool(
+  destination: DestinationSeed,
+  tier: ScenarioTier
+): DiningSpot[] {
+  const venuesDining = destination.venues?.dining;
+  if (!venuesDining) return pickDiningPool(destination.dining, tier);
+  return [
+    ...venuesDining.casual,
+    ...venuesDining.sitdown,
+    ...venuesDining.premium
+  ].map((v) => toDiningSpotFromVenue(v, tier));
 }
 
 function buildFlexibleDayTitle(dayNumber: number, stayNeighborhood: string) {
@@ -424,12 +536,18 @@ export function buildTripScenarios(input: PlannerInput, match: DestinationMatch)
     const meta = SCENARIO_META[tier];
     const flightTemplate = destination.flights[tier];
     const stay = destination.stays[tier];
-    const diningHighlights = pickDiningHighlights(destination.dining, tier, input.nights);
-    const diningPool = pickDiningPool(destination.dining, tier);
-    const activities = pickActivities(destination.activities, tier, input.nights);
-    const airfarePerTraveler = Math.round(flightTemplate.baseFarePerTraveler * originMultiplier * meta.flightMultiplier);
+    const diningHighlights = resolveDiningHighlights(destination, tier, input.nights);
+    const diningPool = resolveDiningPool(destination, tier);
+    const activities = resolveActivities(destination, tier, input.nights);
+    const rawAirfarePerTraveler = Math.round(
+      flightTemplate.baseFarePerTraveler * originMultiplier * meta.flightMultiplier
+    );
+    const airfarePerTraveler = applyFlightFloor(rawAirfarePerTraveler, tier, destination, input.origin);
     const airfareTotal = airfarePerTraveler * input.travelers;
-    const lodgingTotal = stay.nightlyRate * input.nights;
+    const nightlyRate = applyHotelFloor(stay.nightlyRate, tier, destination);
+    const lodgingTotal = nightlyRate * input.nights;
+    const arrivalTransferTotal = destination.arrivalTransferCost?.low ?? 0;
+    const stayNeighborhood = destination.venues?.neighborhoods[tier] ?? stay.neighborhood;
     const foodBaseline =
       diningHighlights.reduce((total, spot) => total + spot.estimatedPerPerson, 0) / Math.max(diningHighlights.length, 1);
     const dailyBudgetPerTraveler = Math.round(foodBaseline * meta.foodMultiplier + 18);
@@ -444,7 +562,7 @@ export function buildTripScenarios(input: PlannerInput, match: DestinationMatch)
       dailyFoodPerTraveler: dailyBudgetPerTraveler,
       activitiesTotal,
       transitPerDay,
-      arrivalTransferTotal: 0
+      arrivalTransferTotal
     });
 
     const flight: FlightPlan = {
@@ -484,11 +602,11 @@ export function buildTripScenarios(input: PlannerInput, match: DestinationMatch)
         activities,
         input.nights,
         stay.name,
-        stay.neighborhood
+        stayNeighborhood
       ),
       arrivalPlan: [
         `Book the ${flight.airline} flight into ${destination.airportCode} and aim for the ${flight.arriveWindow.toLowerCase()} arrival window.`,
-        `Head to ${stay.neighborhood} first so everyone can settle in before doing anything ambitious.`,
+        `Head to ${stayNeighborhood} first so everyone can settle in before doing anything ambitious.`,
         "Use the first meal and first night to recover, not to cram in sightseeing."
       ],
       bookingSequence: [
