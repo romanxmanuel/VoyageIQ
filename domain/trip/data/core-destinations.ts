@@ -545,7 +545,73 @@ export const coreDestinations: DestinationSeed[] = [
         summary: "Worth it once the trip has enough days to absorb the transit overhead.",
         fit: ["elevated", "signature"]
       }
-    ]
+    ],
+    venues: {
+      activities: {
+        lean: [
+          { name: "Musée d'Orsay", neighborhood: "Saint-Germain", estimatedPerPerson: 16, durationHours: 3, description: "World-class Impressionist collection in a converted train station. Book online — lines at the door are long." },
+          { name: "Sacré-Cœur & Montmartre walk", neighborhood: "Montmartre", estimatedPerPerson: 0, durationHours: 2.5, description: "Free hilltop basilica with a sweeping Paris view. Wander the artist quarter below for crepes and street sketches." },
+          { name: "Centre Pompidou", neighborhood: "Marais", estimatedPerPerson: 15, durationHours: 2, description: "Modern and contemporary art museum with a rooftop view. Combine with a walk through Le Marais." }
+        ],
+        balanced: [
+          { name: "Eiffel Tower (summit)", neighborhood: "Champ de Mars", estimatedPerPerson: 32, durationHours: 2, description: "Book the summit ticket online weeks ahead. Visit at dusk for golden hour then stay for the hourly light show." },
+          { name: "Versailles day trip", neighborhood: "Versailles", estimatedPerPerson: 35, durationHours: 6, description: "Palace of Versailles plus the Grand Trianon and gardens. Take the RER C — 40 minutes from central Paris." },
+          { name: "Louvre Museum", neighborhood: "1st arrondissement", estimatedPerPerson: 22, durationHours: 3, description: "Pick 2–3 wings rather than trying to see everything. Denon wing has the Mona Lisa, Venus de Milo, and Winged Victory." }
+        ],
+        elevated: [
+          { name: "Paris food market tour (Marché d'Aligre)", neighborhood: "Bastille", estimatedPerPerson: 45, durationHours: 3, description: "Guided morning market tour with tastings. One of the oldest and most authentic outdoor markets in Paris." },
+          { name: "Seine River dinner cruise", neighborhood: "Pont de l'Alma", estimatedPerPerson: 90, durationHours: 2.5, description: "Bateaux Parisiens or Bateaux Mouches. Multi-course French dinner while passing Notre-Dame and the Eiffel Tower." },
+          { name: "Musée Rodin & Gardens", neighborhood: "Invalides", estimatedPerPerson: 14, durationHours: 2, description: "Elegant sculpture museum in an 18th-century mansion. The Thinker is in the garden. Quiet and manageable." }
+        ],
+        signature: [
+          { name: "Moulin Rouge dinner show", neighborhood: "Pigalle", estimatedPerPerson: 240, durationHours: 4, description: "The original cabaret. Dinner + show package. Book well in advance — regularly sold out months ahead." },
+          { name: "Private cheese and wine tasting", neighborhood: "Marais", estimatedPerPerson: 110, durationHours: 2, description: "Small-group or private session in a Marais cave à vin. Learn AOC cheese pairings with regional French wines." },
+          { name: "Champagne region day trip", neighborhood: "Épernay", estimatedPerPerson: 180, durationHours: 8, description: "Train to Épernay or Reims for Moët, Veuve Clicquot, or Taittinger cellar tours. Best with a half-day tour company." }
+        ]
+      },
+      dining: {
+        casual: [
+          { name: "Bouillon Pigalle", neighborhood: "Pigalle", cuisine: "French bistro", estimatedPerPerson: 18, description: "Classic bouillon — affordable traditional French food in a beautiful 1900s brasserie setting. Expect a queue but it moves fast." },
+          { name: "L'As du Fallafel", neighborhood: "Marais", cuisine: "Falafel", estimatedPerPerson: 8, description: "Legendary falafel stand in the Jewish quarter. The takeaway line is worth it — best falafel in Paris." },
+          { name: "Du Pain et des Idées", neighborhood: "Canal Saint-Martin", cuisine: "Boulangerie", estimatedPerPerson: 7, description: "Widely considered one of the best bakeries in Paris. Try the escargot pastry and the pain des amis loaf." }
+        ],
+        sitdown: [
+          { name: "Septime", neighborhood: "Bastille", cuisine: "Modern French bistro", estimatedPerPerson: 75, description: "One Michelin star with a relaxed atmosphere. Book 2–3 weeks ahead. The tasting menu changes weekly." },
+          { name: "Le Comptoir du Relais", neighborhood: "Saint-Germain", cuisine: "French brasserie", estimatedPerPerson: 45, description: "Yves Camdeborde's classic brasserie. Excellent steak tartare and charcuterie. No reservations for dinner — arrive early." },
+          { name: "Frenchie Bar à Vins", neighborhood: "Sentier", cuisine: "Wine bar", estimatedPerPerson: 55, description: "Smaller sister to Frenchie restaurant. Natural wines and excellent small plates. No reservations accepted." }
+        ],
+        premium: [
+          { name: "Guy Savoy", neighborhood: "Pont des Arts", cuisine: "French haute cuisine", estimatedPerPerson: 450, description: "Three Michelin stars. The artichoke and black truffle soup is iconic. Reserve months ahead." },
+          { name: "Le Grand Véfour", neighborhood: "Palais Royal", cuisine: "Classic French", estimatedPerPerson: 280, description: "Two Michelin stars in one of Paris's oldest and most beautiful dining rooms." },
+          { name: "Taillevent", neighborhood: "8th arrondissement", cuisine: "French haute cuisine", estimatedPerPerson: 320, description: "One of the grande dames of Parisian fine dining. Two Michelin stars, formal but not stiff." }
+        ]
+      },
+      neighborhoods: {
+        lean: "Bastille",
+        balanced: "Marais",
+        elevated: "Saint-Germain",
+        signature: "8th arrondissement"
+      },
+      travelIntel: {
+        bestMonths: "April–June and September–October. Paris in July–August is hot and crowded. Winter is quiet and atmospheric but cold.",
+        visaNote: "US citizens: no visa required for stays under 90 days in the Schengen Area. ETIAS authorization required from late 2025.",
+        currency: "Euro (EUR). Cards accepted nearly everywhere. Keep €20–€50 cash for small cafes, markets, and tips.",
+        transitTip: "Paris Metro is excellent. Buy a carnet (book of 10 tickets) or a Navigo Easy card. Avoid taxis for short trips — Metro is faster.",
+        arrivalNote: "CDG Airport: 35–50 min by RER B (~€12) or 45 min by taxi (~€55–€65 fixed rate). Orly: 30 min by OrlyVal + RER B (~€14)."
+      }
+    },
+    flightFloors: {
+      orlando: { economy: 650, premiumEconomy: 1400, business: 2800 },
+      miami: { economy: 600, premiumEconomy: 1300, business: 2600 },
+      "*": { economy: 550, premiumEconomy: 1200, business: 2400 }
+    },
+    hotelFloors: {
+      lean: 80,
+      balanced: 140,
+      elevated: 260,
+      signature: 420
+    },
+    arrivalTransferCost: { low: 12, high: 65 }
   },
   {
     slug: "honolulu",
@@ -722,6 +788,72 @@ export const coreDestinations: DestinationSeed[] = [
         summary: "Best used when the trip wants one polished signature moment without a full luxury budget.",
         fit: ["balanced", "elevated", "signature"]
       }
-    ]
+    ],
+    venues: {
+      activities: {
+        lean: [
+          { name: "Hanauma Bay snorkeling", neighborhood: "East Oahu", estimatedPerPerson: 25, durationHours: 4, description: "Marine sanctuary with protected reef and hundreds of fish species. Reservation required — book 2 days ahead at hanaumabaystatepark.org." },
+          { name: "Diamond Head Summit hike", neighborhood: "Diamond Head", estimatedPerPerson: 5, durationHours: 2, description: "1.6-mile round trip to the volcanic crater rim. Best views of Waikiki and the Honolulu skyline. Arrive before 8 AM to beat crowds." },
+          { name: "Waimea Valley & waterfall", neighborhood: "North Shore", estimatedPerPerson: 20, durationHours: 3.5, description: "Botanical garden with a trail to a 45-foot waterfall and natural swimming hole. North Shore drive adds shrimp trucks and beach stops." }
+        ],
+        balanced: [
+          { name: "Pearl Harbor & USS Arizona Memorial", neighborhood: "Pearl Harbor", estimatedPerPerson: 30, durationHours: 4, description: "National memorial with a museum, USS Arizona exhibit, and boat ride to the sunken ship. Free but requires timed entry reservation." },
+          { name: "North Shore surf watching & shrimp trucks", neighborhood: "Haleiwa", estimatedPerPerson: 22, durationHours: 4, description: "Watch big wave surfing at Waimea Bay or Banzai Pipeline (winter). Giovanni's and Romy's are the landmark shrimp truck stops." },
+          { name: "Polynesian Cultural Center", neighborhood: "Laie", estimatedPerPerson: 65, durationHours: 6, description: "Living cultural museum with six island villages, performances, and a luau dinner show. Best for families — long but well-organized." }
+        ],
+        elevated: [
+          { name: "Lanikai Pillboxes sunrise hike", neighborhood: "Kailua", estimatedPerPerson: 0, durationHours: 2.5, description: "Bucket-list sunrise hike with panoramic views of Mokulua Islands and the windward coast. Set the alarm for 5:30 AM." },
+          { name: "Sunset catamaran sail", neighborhood: "Waikiki", estimatedPerPerson: 55, durationHours: 2, description: "Sailing catamaran off Waikiki Beach with cocktails and snacks. Operators depart from the beach — no dock needed." },
+          { name: "Honolulu Museum of Art", neighborhood: "Downtown Honolulu", estimatedPerPerson: 20, durationHours: 2, description: "Strong Asian and Pacific collection in a beautiful 1920s building. Smaller and more manageable than the Bishop Museum." }
+        ],
+        signature: [
+          { name: "Private helicopter tour of Oahu", neighborhood: "Honolulu Airport", estimatedPerPerson: 250, durationHours: 2, description: "Doors-off or doors-on helicopter tour covering Diamond Head, Ko'olau Mountains, and the North Shore. Makani Kai and Blue Hawaiian are top operators." },
+          { name: "Interisland day trip to Maui", neighborhood: "Maui", estimatedPerPerson: 200, durationHours: 8, description: "Short interisland flight to Maui for a full day: Hana drive, beach time, or the Old Lahaina Luau. A second island adds real variety." },
+          { name: "Private surfing lesson (North Shore)", neighborhood: "Haleiwa", estimatedPerPerson: 180, durationHours: 3, description: "Private 1-on-1 session with a local surf instructor at a North Shore break matched to your skill level." }
+        ]
+      },
+      dining: {
+        casual: [
+          { name: "Leonard's Bakery", neighborhood: "Kapahulu", cuisine: "Malasadas", estimatedPerPerson: 8, description: "Famous for Portuguese malasadas (hot fried dough). Been open since 1952. Original and custard-filled are the two to get." },
+          { name: "Rainbow Drive-In", neighborhood: "Kapahulu", cuisine: "Hawaiian plate lunch", estimatedPerPerson: 12, description: "Classic Hawaiian plate lunch: two scoops rice, macaroni salad, and a protein. A must-do for the full local experience." },
+          { name: "Matsumoto Shave Ice", neighborhood: "Haleiwa", cuisine: "Shave ice", estimatedPerPerson: 6, description: "North Shore institution since 1951. Get it with ice cream and azuki beans at the bottom. The line moves fast." }
+        ],
+        sitdown: [
+          { name: "Duke's Waikiki", neighborhood: "Waikiki", cuisine: "Hawaiian seafood", estimatedPerPerson: 40, description: "Oceanfront restaurant named for Duke Kahanamoku. Good fish tacos, mai tais, and Hula Pie. Arrive early for a beach-facing table." },
+          { name: "Ono Seafood", neighborhood: "Kapahulu", cuisine: "Poke", estimatedPerPerson: 20, description: "Hole-in-the-wall poke spot that locals rate as among the best on the island. Simple menu, generous portions." },
+          { name: "Moku Kitchen", neighborhood: "Kakaako", cuisine: "Modern Hawaiian", estimatedPerPerson: 35, description: "Farm-to-table spot in the Kakaako arts district. Great cocktails and a good mix of Hawaii regional cuisine." }
+        ],
+        premium: [
+          { name: "Nobu Honolulu", neighborhood: "Waikiki", cuisine: "Japanese-Peruvian fusion", estimatedPerPerson: 120, description: "Nobu Matsuhisa's Honolulu outpost. The black cod miso is the signature dish. Reservations essential." },
+          { name: "Senia", neighborhood: "Chinatown", cuisine: "Modern American", estimatedPerPerson: 130, description: "James Beard-nominated restaurant with a locally-sourced tasting menu. One of Honolulu's most exciting fine dining spots." },
+          { name: "MW Restaurant", neighborhood: "Ala Moana", cuisine: "Hawaii Regional Cuisine", estimatedPerPerson: 90, description: "Top-chef alumni restaurant celebrating Hawaii's culinary identity. Strong local ingredient sourcing." }
+        ]
+      },
+      neighborhoods: {
+        lean: "Kapahulu",
+        balanced: "Waikiki",
+        elevated: "Ala Moana",
+        signature: "Kahala"
+      },
+      travelIntel: {
+        bestMonths: "April–June and September–October for lower crowds and prices. Peak season (December, June–August) is significantly more expensive.",
+        visaNote: "Hawaii is a US state — no international travel requirements for US citizens.",
+        currency: "USD. Cards accepted everywhere. No currency exchange needed for US travelers.",
+        transitTip: "Rent a car if you plan to explore beyond Waikiki — Oahu's bus system is limited. Waikiki itself is walkable. Uber works well in the city.",
+        arrivalNote: "Daniel K. Inouye Airport (HNL): 20–30 min to Waikiki by taxi or rideshare (~$30–$40). No rail connection yet — rideshare is the most reliable option."
+      }
+    },
+    flightFloors: {
+      orlando: { economy: 500, premiumEconomy: 1100, business: 2200 },
+      miami: { economy: 480, premiumEconomy: 1050, business: 2100 },
+      "*": { economy: 400, premiumEconomy: 900, business: 1800 }
+    },
+    hotelFloors: {
+      lean: 80,
+      balanced: 130,
+      elevated: 240,
+      signature: 380
+    },
+    arrivalTransferCost: { low: 30, high: 45 }
   }
 ];
