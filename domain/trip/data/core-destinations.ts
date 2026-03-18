@@ -176,7 +176,199 @@ export const coreDestinations: DestinationSeed[] = [
         summary: "A premium shortcut into neighborhood food confidence without planning friction.",
         fit: ["elevated", "signature"]
       }
-    ]
+    ],
+    venues: {
+      activities: {
+        lean: [
+          {
+            name: "Senso-ji Temple & Nakamise Shopping Street",
+            neighborhood: "Asakusa",
+            estimatedPerPerson: 0,
+            durationHours: 2.5,
+            description: "Tokyo's oldest temple with a famous market street leading to the gate. Free entry — arrive before 9 AM to beat tour groups."
+          },
+          {
+            name: "Shibuya Crossing & Scramble Square observation deck",
+            neighborhood: "Shibuya",
+            estimatedPerPerson: 20,
+            durationHours: 1.5,
+            description: "Watch the world's busiest pedestrian crossing from street level or from the rooftop deck on the 46th floor."
+          },
+          {
+            name: "Ueno Park & Tokyo National Museum",
+            neighborhood: "Ueno",
+            estimatedPerPerson: 5,
+            durationHours: 3,
+            description: "The museum complex anchors one of Tokyo's biggest public parks. Museum entry ¥1,000; park is free."
+          }
+        ],
+        balanced: [
+          {
+            name: "Meiji Jingu Shrine & Harajuku walk",
+            neighborhood: "Harajuku",
+            estimatedPerPerson: 0,
+            durationHours: 2,
+            description: "Forested shrine in the middle of the city followed by Takeshita Street for local youth fashion and street food."
+          },
+          {
+            name: "Tokyo Skytree",
+            neighborhood: "Asakusa",
+            estimatedPerPerson: 22,
+            durationHours: 2,
+            description: "World's second-tallest tower with a 350m observation deck. Book tickets online to skip the line."
+          },
+          {
+            name: "Tsukiji Outer Market breakfast",
+            neighborhood: "Tsukiji",
+            estimatedPerPerson: 18,
+            durationHours: 1.5,
+            description: "The outer market is still open and serves the best tamago sushi and sashimi breakfast in the city."
+          }
+        ],
+        elevated: [
+          {
+            name: "teamLab Borderless (Azabudai Hills)",
+            neighborhood: "Azabudai",
+            estimatedPerPerson: 32,
+            durationHours: 3,
+            description: "Immersive digital art museum with dozens of connected rooms. Book 2–3 weeks out — sells out consistently."
+          },
+          {
+            name: "Sake tasting at Kurand Sake Market",
+            neighborhood: "Ikebukuro",
+            estimatedPerPerson: 40,
+            durationHours: 2,
+            description: "Flat-fee sake tasting with 100+ varieties. Get a cup and work through the flavors at your own pace."
+          },
+          {
+            name: "Tokyo cooking class (ramen or sushi)",
+            neighborhood: "Shinjuku",
+            estimatedPerPerson: 65,
+            durationHours: 3,
+            description: "Small-group class where you cook and eat. Tokyo Cooking Studio and Cooking Sun both get strong reviews."
+          }
+        ],
+        signature: [
+          {
+            name: "Robot Restaurant dinner show",
+            neighborhood: "Shinjuku",
+            estimatedPerPerson: 100,
+            durationHours: 2.5,
+            description: "Loud, absurd, and completely Tokyo. Dinner show with giant robots, neon dancers, and over-the-top production design."
+          },
+          {
+            name: "Shinkansen day trip to Nikko or Kamakura",
+            neighborhood: "Nikko / Kamakura",
+            estimatedPerPerson: 130,
+            durationHours: 8,
+            description: "One-day bullet-train escape from Tokyo. Nikko for ornate shrines and waterfalls; Kamakura for the Great Buddha and coastal walks."
+          },
+          {
+            name: "Private sake tasting & kaiseki pairing",
+            neighborhood: "Ginza",
+            estimatedPerPerson: 90,
+            durationHours: 2.5,
+            description: "Guided private session pairing regional sake with seasonal kaiseki dishes. Book at least a week ahead."
+          }
+        ]
+      },
+      dining: {
+        casual: [
+          {
+            name: "Fuunji",
+            neighborhood: "Shinjuku",
+            cuisine: "Tsukemen",
+            estimatedPerPerson: 14,
+            description: "One of Tokyo's most celebrated tsukemen spots. Rich, concentrated dipping broth. Expect a short line at lunch."
+          },
+          {
+            name: "Ichiran Ramen",
+            neighborhood: "Shibuya",
+            cuisine: "Ramen",
+            estimatedPerPerson: 13,
+            description: "Solo-booth ramen experience. Order broth richness and spice on a form. Perfect for a low-key meal after sightseeing."
+          },
+          {
+            name: "Gyukatsu Motomura",
+            neighborhood: "Shibuya",
+            cuisine: "Gyukatsu",
+            estimatedPerPerson: 16,
+            description: "Breaded beef cutlet cooked at your table on a hot stone. Better and cheaper than tonkatsu at comparable spots."
+          }
+        ],
+        sitdown: [
+          {
+            name: "Gonpachi Shibuya",
+            neighborhood: "Shibuya",
+            cuisine: "Izakaya",
+            estimatedPerPerson: 35,
+            description: "Classic Tokyo izakaya atmosphere — skewers, sake, and grilled things. The Shibuya branch is the most accessible."
+          },
+          {
+            name: "Ninja Tokyo",
+            neighborhood: "Akasaka",
+            cuisine: "Japanese multi-course",
+            estimatedPerPerson: 75,
+            description: "Novelty dinner experience in a feudal-style maze. Food is decent; the theatrics make it memorable for groups."
+          },
+          {
+            name: "Trattoria Siciliana Don Ciccio",
+            neighborhood: "Shinjuku",
+            cuisine: "Italian",
+            estimatedPerPerson: 45,
+            description: "Tokyo has surprisingly great Italian food. This local neighborhood spot is excellent value for a non-Japanese night."
+          }
+        ],
+        premium: [
+          {
+            name: "Sushi Saito",
+            neighborhood: "Akasaka",
+            cuisine: "Omakase sushi",
+            estimatedPerPerson: 350,
+            description: "Three Michelin stars. Considered one of the best sushi counters in the world. Requires a Japanese-speaking local contact to book."
+          },
+          {
+            name: "Narisawa",
+            neighborhood: "Minami-Aoyama",
+            cuisine: "Innovative Japanese",
+            estimatedPerPerson: 280,
+            description: "Two Michelin stars. Regularly ranked in Asia's 50 Best Restaurants. Book at least 2 months ahead."
+          },
+          {
+            name: "Sukiyabashi Jiro Honten",
+            neighborhood: "Ginza",
+            cuisine: "Omakase sushi",
+            estimatedPerPerson: 400,
+            description: "The most famous sushi counter in the world. Three Michelin stars. Booking only through a hotel concierge."
+          }
+        ]
+      },
+      neighborhoods: {
+        lean: "Asakusa",
+        balanced: "Shinjuku",
+        elevated: "Shibuya",
+        signature: "Ginza"
+      },
+      travelIntel: {
+        bestMonths: "March–May (cherry blossoms) and Oct–Nov. June–July is rainy season — expect humidity and crowds without the blooms.",
+        visaNote: "US citizens: no visa required for stays under 90 days. Passport must be valid for the duration of stay.",
+        currency: "Japanese Yen (JPY). Tokyo is increasingly card-friendly but carry ¥10,000–¥20,000 cash for smaller shops, shrines, and vending machines.",
+        transitTip: "Get a Suica IC card at the airport — reloadable, works on all trains and buses. JR Pass ($300–$500) only worth it if you plan to leave Tokyo.",
+        arrivalNote: "Haneda (HND): 30 min by Tokyo Monorail (~$5). Narita (NRT): 60–90 min by Narita Express (~$30). Haneda is strongly preferred."
+      }
+    },
+    flightFloors: {
+      orlando: { economy: 1100, premiumEconomy: 2200, business: 4000 },
+      miami: { economy: 1100, premiumEconomy: 2200, business: 4000 },
+      "*": { economy: 900, premiumEconomy: 1800, business: 3500 }
+    },
+    hotelFloors: {
+      lean: 75,
+      balanced: 120,
+      elevated: 220,
+      signature: 350
+    },
+    arrivalTransferCost: { low: 5, high: 30 }
   },
   {
     slug: "paris",
