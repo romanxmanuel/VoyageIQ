@@ -1,5 +1,11 @@
 # VoyageIQ Project Guide
 
+## Active Spec
+
+See `docs/superpowers/specs/2026-03-17-content-pricing-features-design.md` for the current implementation plan.
+Covers: named venue data per destination, flight/hotel pricing floors, arrival transfer line item, Claude API enrichment for generic destinations, cabin class labels, share-via-URL, and travel intel card.
+Start with the **Files Affected** table at the bottom of the spec, then follow the **Phase 1** data priority (Tokyo → Paris → Honolulu).
+
 ## 1. Project Purpose
 
 VoyageIQ is a constraint-aware travel optimizer, not a booking-filter clone.
