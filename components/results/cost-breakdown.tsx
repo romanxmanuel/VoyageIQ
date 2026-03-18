@@ -30,6 +30,12 @@ export function CostBreakdown({
           <span className="font-medium text-white">{formatCurrency(cost[row.key])}</span>
         </div>
       ))}
+      {cost.arrivalTransferTotal > 0 && (
+        <div className="flex items-center justify-between text-sm text-slate-300">
+          <span>Airport transfers</span>
+          <span className="font-medium text-white">{formatCurrency(cost.arrivalTransferTotal)}</span>
+        </div>
+      )}
       <p className="mt-2 text-xs text-white/40">
         {flightPricingSource === "public-verifier"
           ? "Budget flight pricing was checked against a live public compare source. Verify the final fare on the compare link before booking."
