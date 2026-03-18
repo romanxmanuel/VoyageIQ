@@ -1,12 +1,14 @@
-import { Compass, PlaneTakeoff, SlidersHorizontal } from "lucide-react";
+import { PlaneTakeoff } from "lucide-react";
 import { PageShell } from "@/components/layout/page-shell";
-import { PhilippinesSpotlights } from "@/components/planner/philippines-spotlights";
 import { TripIntakeForm } from "@/components/planner/trip-intake-form";
 import { ScenarioExplorer } from "@/components/results/scenario-explorer";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { getDefaultPlannerInput, parsePlannerSearchParams } from "@/features/search/planner-input";
-import { buildPlannerViewModel, DestinationResolutionError, getPlannerLandingData } from "@/server/services/build-planner-view-model";
+import {
+  buildPlannerViewModel,
+  DestinationResolutionError,
+  getPlannerLandingData
+} from "@/server/services/build-planner-view-model";
 
 type PageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -32,121 +34,249 @@ export default async function Home({ searchParams }: PageProps) {
   }
 
   return (
-    <PageShell className="gap-10">
-      <section className="relative overflow-hidden rounded-[34px] border border-white/10 bg-[linear-gradient(150deg,rgba(8,16,28,0.92),rgba(7,26,38,0.88))] px-6 py-8 shadow-[0_30px_120px_rgba(0,0,0,0.22)] sm:px-8 sm:py-10">
-        <div className="absolute inset-y-0 right-0 hidden w-1/2 bg-[radial-gradient(circle_at_top_right,rgba(101,245,212,0.18),transparent_55%)] lg:block" />
-        <div className="relative space-y-8">
-          <div className="max-w-4xl space-y-4">
-            <Badge>Smarter Trip Planning</Badge>
-            <h1 className="font-display text-5xl leading-[0.95] tracking-tight text-white sm:text-6xl lg:text-7xl">
-              Find the best trip you can take with the time and budget you actually have.
-            </h1>
-            <p className="max-w-3xl text-balance text-lg leading-8 text-slate-200">
-              VoyageIQ builds a full trip plan from a few simple details, then shows how the trip changes as you spend less or more.
-            </p>
+    <div className="relative">
+      {/* ── CINEMATIC HERO (landing only) ── */}
+      {!viewModel && (
+        <section className="relative flex min-h-[90vh] flex-col overflow-hidden px-5 sm:px-8">
+          {/* Ambient light blobs */}
+          <div className="pointer-events-none absolute left-[-80px] top-[-40px] h-[560px] w-[560px] rounded-full bg-cyan-400/9 blur-[130px]" />
+          <div className="pointer-events-none absolute right-[-60px] top-[60px] h-[380px] w-[380px] rounded-full bg-amber-400/7 blur-[110px]" />
+          <div className="pointer-events-none absolute bottom-0 left-1/2 h-[300px] w-[800px] -translate-x-1/2 bg-cyan-400/4 blur-[120px]" />
+
+          {/* Nav strip */}
+          <div className="relative mx-auto flex w-full max-w-7xl items-center justify-between py-7">
+            <div className="flex items-center gap-2.5">
+              <div className="rounded-xl bg-cyan-400/12 p-2">
+                <PlaneTakeoff className="size-4 text-cyan-400" />
+              </div>
+              <span
+                className="font-display text-[17px] font-extrabold tracking-tight text-white"
+                style={{ fontFamily: "var(--font-outfit), sans-serif" }}
+              >
+                VoyageIQ
+              </span>
+            </div>
+            <div className="hidden items-center gap-6 sm:flex">
+              <span className="text-sm text-slate-500">Trip strategy engine</span>
+              <span className="rounded-full border border-cyan-400/25 bg-cyan-400/8 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-cyan-300">
+                Beta
+              </span>
+            </div>
           </div>
 
-          <div className="grid gap-4 lg:grid-cols-3">
-            <Card className="bg-white/5">
-              <div className="flex items-center gap-3">
-                <div className="rounded-2xl bg-cyan-300/12 p-3 text-cyan-100">
-                  <Compass className="size-5" />
-                </div>
-                <div>
-                  <CardTitle className="text-lg">Simple start</CardTitle>
-                  <CardDescription>Just enter where you want to go, where you are flying from, and who is coming.</CardDescription>
-                </div>
-              </div>
-            </Card>
-            <Card className="bg-white/5">
-              <div className="flex items-center gap-3">
-                <div className="rounded-2xl bg-cyan-300/12 p-3 text-cyan-100">
-                  <SlidersHorizontal className="size-5" />
-                </div>
-                <div>
-                  <CardTitle className="text-lg">Easy comparisons</CardTitle>
-                  <CardDescription>See what gets better, and what you give up, as the trip gets cheaper or nicer.</CardDescription>
-                </div>
-              </div>
-            </Card>
-            <Card className="bg-white/5">
-              <div className="flex items-center gap-3">
-                <div className="rounded-2xl bg-cyan-300/12 p-3 text-cyan-100">
-                  <PlaneTakeoff className="size-5" />
-                </div>
-                <div>
-                  <CardTitle className="text-lg">Real trip links</CardTitle>
-                  <CardDescription>Check real flights, stays, restaurants, and activities without digging through ten tabs.</CardDescription>
-                </div>
-              </div>
-            </Card>
-          </div>
-        </div>
-      </section>
+          {/* Hero content grid */}
+          <div className="relative mx-auto flex w-full max-w-7xl flex-1 flex-col justify-center lg:grid lg:grid-cols-[1fr_440px] lg:items-center lg:gap-14">
+            {/* LEFT — massive type + copy */}
+            <div className="space-y-8">
+              <p
+                className="font-mono text-[10px] uppercase tracking-[0.3em] text-cyan-400/60"
+              >
+                Constraint-aware travel optimizer
+              </p>
 
-      <TripIntakeForm
-        destinationError={destinationError}
-        featuredDestinations={landingData.featuredDestinations}
-        philippinesSpotlights={landingData.philippinesSpotlights}
-        initialInput={plannerInput ?? getDefaultPlannerInput()}
-      />
-
-      <Card>
-        <PhilippinesSpotlights
-          origin={(plannerInput ?? getDefaultPlannerInput()).origin}
-          spots={landingData.philippinesSpotlights}
-        />
-      </Card>
-
-      {viewModel ? (
-        <ScenarioExplorer viewModel={viewModel} />
-      ) : (
-        <section className="grid gap-6 lg:grid-cols-[1.08fr_0.92fr]">
-          <Card>
-            <Badge>How it helps</Badge>
-            <CardTitle className="mt-4 text-3xl">
-              One search turns into a few trip styles you can actually compare.
-            </CardTitle>
-            <CardDescription className="mt-4 text-base text-slate-200">
-              Instead of making you build a trip piece by piece, VoyageIQ gives you a few strong options right away.
-            </CardDescription>
-            <div className="mt-6 grid gap-4 md:grid-cols-3">
-              <div className="rounded-[24px] border border-white/10 bg-white/5 p-5">
-                <p className="text-xs uppercase tracking-[0.18em] text-slate-400">Built around real limits</p>
-                <p className="mt-2 text-sm text-white">Trip length, family size, and budget all shape the answer from the start.</p>
+              <div className="leading-none">
+                <h1
+                  className="font-display font-black"
+                  style={{ fontFamily: "var(--font-outfit), sans-serif" }}
+                >
+                  <span
+                    className="block text-outlined"
+                    style={{
+                      fontSize: "clamp(68px, 10.5vw, 148px)",
+                      lineHeight: 0.88
+                    }}
+                  >
+                    VOYAGE
+                  </span>
+                  <span
+                    className="block text-white"
+                    style={{
+                      fontSize: "clamp(68px, 10.5vw, 148px)",
+                      lineHeight: 0.88
+                    }}
+                  >
+                    IQ
+                  </span>
+                </h1>
               </div>
-              <div className="rounded-[24px] border border-white/10 bg-white/5 p-5">
-                <p className="text-xs uppercase tracking-[0.18em] text-slate-400">Clear trip styles</p>
-                <p className="mt-2 text-sm text-white">Budget, best value, comfortable, and splurge options help you compare without getting overwhelmed.</p>
-              </div>
-              <div className="rounded-[24px] border border-white/10 bg-white/5 p-5">
-                <p className="text-xs uppercase tracking-[0.18em] text-slate-400">Quick next-best options</p>
-                <p className="mt-2 text-sm text-white">When you move the slider, you can quickly see the closest cheaper or nicer version of the trip.</p>
+
+              <p className="max-w-[480px] text-lg leading-8 text-slate-300">
+                Tell VoyageIQ where you want to go and who is coming. Get a full
+                trip plan across four budget tiers — with real flights, hotels,
+                restaurants, and a day-by-day itinerary.
+              </p>
+
+              {/* Stat pills */}
+              <div className="flex flex-wrap gap-2.5">
+                {[
+                  "4 trip tiers",
+                  "Live flight prices",
+                  "Real booking links",
+                  "Day-by-day plan"
+                ].map((stat) => (
+                  <span
+                    key={stat}
+                    className="rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm text-slate-400"
+                  >
+                    {stat}
+                  </span>
+                ))}
               </div>
             </div>
-          </Card>
 
-          <Card>
-            <Badge>Popular destinations</Badge>
-            <div className="mt-4 space-y-4">
-              {landingData.featuredDestinations.map((destination) => (
-                <div className="rounded-[24px] border border-white/10 bg-white/5 p-5" key={destination.slug}>
-                  <div className="flex items-center justify-between gap-4">
-                    <div>
-                      <p className="font-display text-2xl text-white">{destination.name}</p>
-                      <p className="text-sm text-slate-400">{destination.country}</p>
-                    </div>
-                    <p className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs uppercase tracking-[0.18em] text-cyan-50">
-                      Popular
-                    </p>
+            {/* RIGHT — floating preview card */}
+            <div className="mt-12 lg:mt-0">
+              <div className="glass rounded-[28px] p-7 shadow-[0_48px_100px_rgba(0,0,0,0.45)]">
+                <div className="mb-5 flex items-center justify-between">
+                  <p className="text-[10px] uppercase tracking-[0.22em] text-slate-500">
+                    Sample plan preview
+                  </p>
+                  <span className="rounded-full border border-cyan-400/25 bg-cyan-400/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-cyan-300">
+                    Best value
+                  </span>
+                </div>
+
+                <p
+                  className="font-display text-2xl font-bold text-white"
+                  style={{ fontFamily: "var(--font-outfit), sans-serif" }}
+                >
+                  Bali, Indonesia
+                </p>
+                <p className="mt-1 text-sm text-slate-500">10 nights · 2 travelers · from Orlando</p>
+
+                <div className="mt-6 space-y-0">
+                  <div className="flex justify-between border-t border-white/7 py-3">
+                    <span className="text-sm text-slate-500">Flights (economy)</span>
+                    <span className="text-sm font-medium text-slate-200">$1,420 total</span>
                   </div>
-                  <p className="mt-3 text-sm leading-6 text-slate-300">{destination.summary}</p>
+                  <div className="flex justify-between border-t border-white/7 py-3">
+                    <span className="text-sm text-slate-500">Hotel</span>
+                    <span className="text-sm font-medium text-slate-200">$68 / night</span>
+                  </div>
+                  <div className="flex justify-between border-t border-white/7 py-3">
+                    <span className="text-sm text-slate-500">Food</span>
+                    <span className="text-sm font-medium text-slate-200">$28 / day each</span>
+                  </div>
+                  <div className="flex justify-between border-t border-white/7 py-3">
+                    <span className="text-sm text-slate-500">Activities</span>
+                    <span className="text-sm font-medium text-slate-200">$340 total</span>
+                  </div>
                 </div>
-              ))}
+
+                <div className="mt-2 flex items-center justify-between rounded-2xl border border-cyan-400/18 bg-cyan-400/7 px-5 py-3.5">
+                  <span className="text-sm font-semibold text-cyan-200">Total for 2</span>
+                  <span
+                    className="font-display text-2xl font-bold text-white"
+                    style={{ fontFamily: "var(--font-outfit), sans-serif" }}
+                  >
+                    $3,240
+                  </span>
+                </div>
+
+                <p className="mt-4 text-[11px] leading-5 text-slate-600">
+                  Slide the budget dial below to see all four tiers →
+                </p>
+              </div>
             </div>
-          </Card>
+          </div>
+
+          {/* Scroll indicator */}
+          <div className="relative mx-auto flex w-full max-w-7xl justify-start pb-10 pt-6">
+            <div className="flex flex-col items-start gap-2">
+              <p className="text-[10px] uppercase tracking-[0.25em] text-slate-600">
+                Plan your trip below
+              </p>
+              <div className="h-8 w-px bg-gradient-to-b from-slate-600 to-transparent" />
+            </div>
+          </div>
         </section>
       )}
-    </PageShell>
+
+      {/* ── FORM + RESULTS ── */}
+      <PageShell className={viewModel ? "gap-8 pt-8" : "gap-8 pt-0"}>
+        <TripIntakeForm
+          destinationError={destinationError}
+          featuredDestinations={landingData.featuredDestinations}
+          philippinesSpotlights={landingData.philippinesSpotlights}
+          initialInput={plannerInput ?? getDefaultPlannerInput()}
+        />
+
+        {viewModel ? (
+          <ScenarioExplorer viewModel={viewModel} />
+        ) : (
+          <section className="grid gap-5 lg:grid-cols-[1.12fr_0.88fr]">
+            <Card>
+              <p className="text-[10px] uppercase tracking-[0.22em] text-slate-500">
+                How it works
+              </p>
+              <CardTitle className="mt-3 text-[1.75rem] leading-tight">
+                One search. Four trip styles you can actually compare.
+              </CardTitle>
+              <CardDescription className="mt-4 text-base leading-7 text-slate-300">
+                VoyageIQ builds a complete trip across four budget tiers — lean, best
+                value, comfortable, and premium. See what changes, and what you give
+                up, instantly.
+              </CardDescription>
+              <div className="mt-6 space-y-2.5">
+                {[
+                  {
+                    label: "Built around real limits",
+                    text: "Trip length, group size, and budget all shape the answer from day one."
+                  },
+                  {
+                    label: "Four clear trip styles",
+                    text: "Compare without getting overwhelmed — lean through premium, side by side."
+                  },
+                  {
+                    label: "Instant tradeoff view",
+                    text: "Move the slider and see the closest cheaper or nicer version in real time."
+                  }
+                ].map((item) => (
+                  <div
+                    key={item.label}
+                    className="rounded-2xl border border-white/8 bg-white/4 px-5 py-4"
+                  >
+                    <p className="text-[10px] uppercase tracking-[0.18em] text-slate-500">
+                      {item.label}
+                    </p>
+                    <p className="mt-1.5 text-sm leading-6 text-slate-300">{item.text}</p>
+                  </div>
+                ))}
+              </div>
+            </Card>
+
+            <Card>
+              <p className="text-[10px] uppercase tracking-[0.22em] text-slate-500">
+                Popular destinations
+              </p>
+              <div className="mt-4 space-y-3">
+                {landingData.featuredDestinations.map((destination) => (
+                  <div
+                    key={destination.slug}
+                    className="rounded-2xl border border-white/8 bg-white/4 p-5 transition hover:border-white/14 hover:bg-white/6"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p
+                          className="font-display text-xl font-semibold text-white"
+                          style={{ fontFamily: "var(--font-outfit), sans-serif" }}
+                        >
+                          {destination.name}
+                        </p>
+                        <p className="mt-0.5 text-xs text-slate-600">{destination.country}</p>
+                      </div>
+                      <span className="mt-0.5 shrink-0 rounded-full border border-cyan-400/22 bg-cyan-400/8 px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.16em] text-cyan-300">
+                        Popular
+                      </span>
+                    </div>
+                    <p className="mt-3 text-sm leading-6 text-slate-400">{destination.summary}</p>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </section>
+        )}
+      </PageShell>
+    </div>
   );
 }

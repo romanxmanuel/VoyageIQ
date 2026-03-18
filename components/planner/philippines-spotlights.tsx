@@ -23,23 +23,23 @@ function ActionChip({ href, label }: { href: string; label: string }) {
 
 export function PhilippinesSpotlights({ origin, spots }: PhilippinesSpotlightsProps) {
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div className="space-y-1">
           <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Philippines ideas</p>
-          <h3 className="font-display text-xl text-white sm:text-2xl">Quick places to browse first</h3>
+          <h3 className="font-display text-lg text-white sm:text-xl">Quick places to browse</h3>
         </div>
-        <p className="max-w-xl text-sm text-slate-300">
-          Watch a quick video, check the destination, then jump straight into flights or stays.
+        <p className="max-w-lg text-xs text-slate-300 sm:text-sm">
+          Watch, compare, then jump into flights or stays.
         </p>
       </div>
 
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
         {spots.map((spot) => (
-          <div className="rounded-[20px] border border-white/10 bg-white/5 p-4" key={spot.slug}>
+          <div className="rounded-[18px] border border-white/10 bg-white/5 p-3.5" key={spot.slug}>
             <div className="flex items-start justify-between gap-3">
               <div>
-                <p className="font-display text-xl text-white">{spot.name}</p>
+                <p className="font-display text-lg text-white">{spot.name}</p>
                 <p className="text-xs text-slate-400">{spot.country}</p>
               </div>
               {spot.airportCode ? (
@@ -49,7 +49,7 @@ export function PhilippinesSpotlights({ origin, spots }: PhilippinesSpotlightsPr
               ) : null}
             </div>
 
-            <p className="mt-2 line-clamp-3 text-sm leading-6 text-slate-300">{spot.summary}</p>
+            <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-300">{spot.summary}</p>
 
             <div className="mt-3 flex flex-wrap gap-2">
               <ActionChip href={buildYouTubeSearchUrl(`${spot.name} Philippines travel vlog`)} label="Watch" />
